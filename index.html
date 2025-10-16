@@ -45,7 +45,7 @@
 
   <script>
     async function loadScripts() {
-      const response = await fetch('content/scripts.json');
+      const response = await fetch('./docs/content/scripts.json');
       const data = await response.json();
       const toc = document.getElementById('toc');
       const content = document.getElementById('content');
