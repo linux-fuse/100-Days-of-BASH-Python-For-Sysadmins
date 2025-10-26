@@ -1,0 +1,142 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 8 - Find Large Files on the System</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Day 8 - Find Large Files on the System</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day7_cleantmp.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day9_monitormemory.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+  <main class="container">
+    <h1>Day 8 - Find Large Files on the System</h1>
+<p data-start="297" data-end="462"><strong>Pupose:</strong></p>
+<p data-start="297" data-end="462">As a system administrator, monitoring disk usage is vital. Sometimes, storage fills up unexpectedly due to large log files, backups, or misconfigured applications.</p>
+<p data-start="464" data-end="556">This script helps you <strong data-start="486" data-end="529">find all files larger than a given size</strong> anywhere on your system.</p>
+<p data-start="558" data-end="679">By default, it lists files larger than <strong data-start="597" data-end="607">100 MB</strong>, but you can easily specify a different threshold (e.g., <code data-start="665" data-end="671">500M</code>, <code data-start="673" data-end="677">2G</code>).</p>
+
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">#!/usr/bin/env bash
+
+# Default size threshold (can be overridden by user input)
+# Examples: 50M (megabytes), 1G (gigabytes)
+SIZE=${1:-100M}
+
+# Use 'find' to search for files larger than the specified size
+# -type f: only regular files
+# -size +$SIZE: matches files larger than given size
+# -exec ls -lh {} \;: lists each matching file with human-readable size
+# 2>/dev/null: suppresses permission-denied errors
+# || true: ensures script exits gracefully even if find encounters issues
+find / -type f -size +"$SIZE" -exec ls -lh {} \; 2>/dev/null || true
+
+</code></pre>
+        <div class="desc">
+                    <p data-start="297" data-end="462"><strong>Explanation:</strong></p>
+<ul>
+    <li data-start="1940" data-end="2002">
+        <p data-start="1942" data-end="2002">The <code data-start="1946" data-end="1949">+</code> before <code data-start="1957" data-end="1964">$SIZE</code> is crucial &mdash; it means &ldquo;greater than.&rdquo;</p>
+    </li>
+    <li data-start="2003" data-end="2123">
+        <p data-start="2005" data-end="2123">Running <code data-start="2013" data-end="2021">find /</code> may take time; limit the search to specific directories for faster results (e.g., <code data-start="2104" data-end="2110">/var</code> or <code data-start="2114" data-end="2121">/home</code>).</p>
+    </li>
+    <li data-start="2124" data-end="2240">
+        <p data-start="2126" data-end="2240">Redirecting errors with <code data-start="2150" data-end="2163">2&gt;/dev/null</code> keeps output clean when the script lacks permission for certain directories.</p>
+    </li>
+</ul>
+
+        </div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+"""
+Script: find_large_files.py
+Purpose: Find files larger than a specified size on the system.
+Usage: ./find_large_files.py [SIZE]
+Example: ./find_large_files.py 500M
+"""
+
+import subprocess
+import sys
+
+# Read size argument from command line or default to 100M
+size = sys.argv[1] if len(sys.argv) > 1 else '100M'
+
+# Construct the 'find' command as a list for subprocess
+# Note: We use the 'find' utility itself for reliability and performance.
+cmd = [
+    'find', '/',               # Search from the root directory
+    '-type', 'f',              # Only look for regular files
+    '-size', f'+{size}',       # Files larger than specified size
+    '-exec', 'ls', '-lh', '{}', ';'  # List them in human-readable form
+]
+
+# Execute the command. check=False prevents crash if command returns non-zero
+subprocess.run(cmd, check=False)
+
+</code></pre>
+        <div class="desc">
+<p data-start="297" data-end="462"><strong>Explanation:</strong></p>
+<ul>
+    <li data-start="3198" data-end="3231">
+        <p data-start="3200" data-end="3231">Added docstring and usage info.</p>
+    </li>
+    <li data-start="3232" data-end="3274">
+        <p data-start="3234" data-end="3274">Uses formatted f-string for readability.</p>
+    </li>
+    <li data-start="3275" data-end="3321">
+        <p data-start="3277" data-end="3321">Defaults to 100M just like the Bash version.</p>
+    </li>
+    <li data-start="3322" data-end="3385">
+        <p data-start="3324" data-end="3385">Safe subprocess call using list syntax instead of shell=True.</p>
+    </li>
+</ul>
+        </div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "kTw3sZw6efM"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

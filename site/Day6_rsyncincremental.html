@@ -1,0 +1,139 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 001 — 100 Days Bash & Python</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">100 Days — Sysadmin Scripting</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day5_backupdirectory.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day7_cleantmp.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Day 6 - Syncing Directories</h1>
+    <p><strong>Purpose:</strong></p>
+<p data-start="4502" data-end="4801">Backing up user data is a fundamental system administration task.<br data-start="4567" data-end="4570" /> In this chapter, we&rsquo;ll use <strong data-start="4597" data-end="4608"><code data-start="4599" data-end="4606">rsync</code></strong>, a powerful file synchronization utility, to back up a directory.<br data-start="4674" data-end="4677" /> You&rsquo;ll see how the same job can be done with a short Bash script and a safe Python equivalent using the <code data-start="4781" data-end="4793">subprocess</code> module.</p>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">
+                #!/usr/bin/env bash
+# Bash script to synchronize /home/ directory using rsync.
+
+SRC=${1:-/home/}                
+# Use first CLI argument or default to /home/
+DST=${2:-/tmp/backup_home/}     
+# Use second CLI argument or default to /tmp/backup_home/
+
+# Run rsync with archive and delete options to mirror directories.
+rsync -a --delete "$SRC" "$DST"
+
+# Notify completion.
+echo "rsync finished"
+</code></pre>
+        <div class="desc">
+<p>&nbsp;</p>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li data-start="1439" data-end="1529">
+<p data-start="1441" data-end="1529">&ldquo;<code data-start="1442" data-end="1460">SRC=${1:-/home/}</code> means use the first argument if provided, or default to <code data-start="1517" data-end="1525">/home/</code>.&rdquo;</p>
+</li>
+<li data-start="1530" data-end="1633">
+<p data-start="1532" data-end="1633">&ldquo;We use <code data-start="1540" data-end="1547">rsync</code> with <code data-start="1553" data-end="1557">-a</code> for archive mode &mdash; it keeps file permissions, timestamps, and ownership.&rdquo;</p>
+</li>
+<li data-start="1634" data-end="1724">
+<p data-start="1636" data-end="1724">&ldquo;The <code data-start="1641" data-end="1651">--delete</code> flag ensures that the backup is an exact mirror &mdash; removing old files.&rdquo;</p>
+</li>
+<li data-start="1725" data-end="1775">
+<p data-start="1727" data-end="1775">&ldquo;Finally, it prints a simple message once done.&rdquo;</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+</div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">
+        #!/usr/bin/env python3
+"""
+Backup synchronization using rsync from Python.
+Usage: python3 backup_sync.py [SRC] [DST]
+Defaults: SRC=/home/, DST=/tmp/backup_home/
+"""
+
+import subprocess   # To execute external commands safely
+import sys          # To handle command-line arguments
+
+# Determine source and destination with defaults
+src = sys.argv[1] if len(sys.argv) > 1 else '/home/'
+dst = sys.argv[2] if len(sys.argv) > 2 else '/tmp/backup_home/'
+
+# Build the rsync command as a list (safer than a single string)
+cmd = ['rsync', '-a', '--delete', src, dst]
+
+# Run the command
+subprocess.run(cmd, check=False)
+
+# Print success message
+print("rsync finished")
+
+</code></pre>
+        <div class="desc"><p>&nbsp;</p>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li data-start="2699" data-end="2785">
+<p data-start="2701" data-end="2785">&ldquo;In Python, we use <code data-start="2720" data-end="2738">subprocess.run()</code> instead of calling shell commands directly.&rdquo;</p>
+</li>
+<li data-start="2786" data-end="2851">
+<p data-start="2788" data-end="2851">&ldquo;Passing the command as a list avoids shell injection risks.&rdquo;</p>
+</li>
+<li data-start="2852" data-end="2935">
+<p data-start="2854" data-end="2935">&ldquo;It&rsquo;s safer, more portable, and allows us to easily capture or log output later.&rdquo;</p>
+</li>
+</ul>
+<p>&nbsp;</p></div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "QwPxa6qyegs"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

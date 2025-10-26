@@ -1,0 +1,120 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 2 — 100 Days Bash & Python</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">100 Days — Sysadmin Scripting</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day1_checkdisk.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day3_rotatecompress.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Day 2 — Simple Alert On Disk Space</h1>
+<h3 data-start="3835" data-end="3846">Purpose</h3>
+<p data-start="3847" data-end="4036">This script extends the previous disk monitor by adding <strong data-start="3903" data-end="3931">real-time alert messages</strong> when usage crosses 90%.<br data-start="3955" data-end="3958" /> Ideal for cron jobs or pipelines that need clear warnings or alert forwarding.</p>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">
+        #!/usr/bin/env bash
+# Monitor disk usage and print alert if above threshold
+THRESH=90
+usage=$(df --output=pcent / | tail -1 | tr -dc '0-9')
+echo "/ usage: ${usage}%"
+if [ "$usage" -ge "$THRESH" ]; then
+  echo "ALERT: disk usage high" >&2
+  exit 1
+fi
+
+</code></pre>
+        <div class="desc">
+        <h4 data-start="4322" data-end="4338">Explanation</h4>
+<ul data-start="4339" data-end="4551">
+<li data-start="4339" data-end="4416">
+<p data-start="4341" data-end="4416"><code data-start="4341" data-end="4346">&gt;&amp;2</code> redirects the alert message to stderr &mdash; useful for monitoring logs.</p>
+</li>
+<li data-start="4417" data-end="4492">
+<p data-start="4419" data-end="4492"><code data-start="4419" data-end="4427">exit 1</code> ensures your automation tools detect the warning as a failure.</p>
+</li>
+<li data-start="4493" data-end="4551">
+<p data-start="4495" data-end="4551">Everything else remains lightweight and dependency-free.</p>
+</li>
+</ul>
+</div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+import shutil, sys, smtplib
+THRESH=90
+total, used, free = shutil.disk_usage('/')
+pct = used*100//total
+print(f"/ usage: {pct}%")
+if pct >= THRESH:
+    print("ALERT: disk usage high")
+    sys.exit(1)
+
+</code></pre>
+        <div class="desc"><h4 data-start="4813" data-end="4829">Explanation</h4>
+<ul data-start="4830" data-end="5097">
+<li data-start="4830" data-end="4914">
+<p data-start="4832" data-end="4914">Similar to Bash logic, using Python&rsquo;s <code data-start="4870" data-end="4878">shutil</code> module for cross-platform access.</p>
+</li>
+<li data-start="4915" data-end="4976">
+<p data-start="4917" data-end="4976">Imports <code data-start="4925" data-end="4934">smtplib</code> in anticipation of adding email alerts.</p>
+</li>
+<li data-start="4977" data-end="5097">
+<p data-start="4979" data-end="5028">Could easily redirect to <code data-start="5004" data-end="5016">sys.stderr</code> if desired:</p>
+<div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary">
+<div class="sticky top-9">&nbsp;</div>
+<div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"ALERT: disk usage high"</span>, file=sys.stderr)</code></div>
+</div>
+</li>
+</ul>
+</div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "N679e3sVD00"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 9 — Display System Memory Usage</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Day 9 — Display System Memory Usage</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day8_findlarge.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day10_selfupdate.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Day 9 — Display System Memory Usage</h1>
+<p><strong>Purpose:</strong></p>
+<p data-start="271" data-end="502">Monitoring memory usage is essential for maintaining system health and performance.<br data-start="354" data-end="357">This script quickly shows how much RAM is in use, available, and the total amount &mdash; helping you identify memory bottlenecks or runaway processes.</p>
+<p data-start="504" data-end="630">The Bash version uses the <code data-start="530" data-end="536">free</code> utility, while the Python version leverages the <code data-start="585" data-end="593">psutil</code> library for a programmatic approach.</p>
+<hr data-start="632" data-end="635">
+<h3 data-start="637" data-end="672"><strong data-start="644" data-end="672">Utilities &amp; Modules Used</strong></h3>
+<h4 data-start="674" data-end="688"><code data-start="682" data-end="688">free</code></h4>
+<ul data-start="689" data-end="907">
+    <li data-start="689" data-end="752">
+        <p data-start="691" data-end="752">A standard Linux command that displays system memory usage.</p>
+    </li>
+    <li data-start="753" data-end="824">
+        <p data-start="755" data-end="824">The <code data-start="759" data-end="763">-h</code> flag shows values in human-readable format (e.g., MB, GB).</p>
+    </li>
+    <li data-start="825" data-end="907">
+        <p data-start="827" data-end="907">Useful for quick checks and integration in monitoring scripts or health reports.</p>
+    </li>
+</ul>
+<h4 data-start="909" data-end="941">Python&rsquo;s <code data-start="926" data-end="934">psutil</code> Module</h4>
+<ul data-start="942" data-end="1167">
+    <li data-start="942" data-end="1089">
+        <p data-start="944" data-end="1089"><code data-start="944" data-end="952">psutil</code> (process and system utilities) is a cross-platform library providing information on system utilization &mdash; CPU, memory, disks, and more.</p>
+    </li>
+    <li data-start="1090" data-end="1167">
+        <p data-start="1092" data-end="1167">Ideal for Python-based monitoring tools, dashboards, or automation systems.</p>
+    </li>
+</ul>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">#!/usr/bin/env bash
+
+# Display memory usage in a human-readable format
+# 'free' shows total, used, and free memory in the system
+# The '-h' flag converts bytes into KB, MB, or GB automatically
+free -h
+</code></pre>
+        <div class="desc"></div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+"""
+Script: check_memory.py
+Purpose: Display total and used memory with percentage usage.
+Requires: psutil (install via 'pip install psutil')
+"""
+
+import psutil  # Import psutil for system resource monitoring
+
+# Retrieve virtual memory statistics
+mem = psutil.virtual_memory()
+
+# Convert bytes to megabytes for readability (1 MB = 1024^2 bytes)
+total_mb = mem.total // 1024**2
+used_mb = mem.used // 1024**2
+percent = mem.percent
+
+# Display memory usage summary similar to 'free -h'
+print(f"Total: {total_mb}MB, Used: {used_mb}MB ({percent}%)")
+</code></pre>
+        <div class="desc"></div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "pDnu8b9-Ptg"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

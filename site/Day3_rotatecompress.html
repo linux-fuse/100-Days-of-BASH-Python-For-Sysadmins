@@ -1,0 +1,129 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 001 — 100 Days Bash & Python</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">100 Days — Sysadmin Scripting</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day2_alertlow.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day4_archiveold.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Day 3 — Log Rotation</h1>
+<h3 data-start="4539" data-end="4550">Purpose</h3>
+<p data-start="4551" data-end="4741">Automate the rotation and compression of log files to prevent disk bloat.<br data-start="4624" data-end="4627" /> This lightweight script compresses each <code data-start="4667" data-end="4673">.log</code> file into a <code data-start="4686" data-end="4691">.gz</code> archive and truncates the original to zero bytes.</p>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">
+        #!/usr/bin/env bash
+# Compress and truncate logs in /var/log/
+for f in /var/log/*.log; do
+  [ -e "$f" ] || continue
+  if [ ! -e "${f}.gz" ]; then
+    gzip -c "$f" > "${f}.gz" && : > "$f"
+    echo "Rotated $f"
+  fi
+done
+</code></pre>
+        <div class="desc">
+        <p>Explanation</p>
+<ul data-start="5013" data-end="5270">
+<li data-start="5013" data-end="5062">
+<p data-start="5015" data-end="5062"><code data-start="5015" data-end="5040">for f in /var/log/*.log</code>: iterate over logs.</p>
+</li>
+<li data-start="5063" data-end="5111">
+<p data-start="5065" data-end="5111"><code data-start="5065" data-end="5090">[ -e "$f" ] || continue</code>: skip if no files.</p>
+</li>
+<li data-start="5112" data-end="5195">
+<p data-start="5114" data-end="5195"><code data-start="5114" data-end="5140">gzip -c "$f" &gt; "${f}.gz"</code>: compress safely, preserving original until success.</p>
+</li>
+<li data-start="5196" data-end="5230">
+<p data-start="5198" data-end="5230"><code data-start="5198" data-end="5208">: &gt; "$f"</code>: truncate the file.</p>
+</li>
+<li data-start="5231" data-end="5270">
+<p data-start="5233" data-end="5270">Prints a confirmation for visibility.</p>
+</li>
+</ul>
+<p data-start="5272" data-end="5290"><strong data-start="5272" data-end="5290">Usage Example:</strong></p>
+</div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+import glob, os, gzip, shutil
+for f in glob.glob('/var/log/*.log'):
+    gz = f + '.gz'
+    if not os.path.exists(gz):
+        with open(f,'rb') as src, gzip.open(gz,'wb') as dst:
+            shutil.copyfileobj(src,dst)
+        open(f,'w').close()
+        print(f'Rotated {f} -> {gz}')
+
+</code></pre>
+        <div class="desc">
+        <h4 data-start="5750" data-end="5766">Explanation</h4>
+<ul data-start="5767" data-end="6031">
+<li data-start="5767" data-end="5804">
+<p data-start="5769" data-end="5804">Uses <code data-start="5774" data-end="5780">glob</code> for pattern matching.</p>
+</li>
+<li data-start="5805" data-end="5860">
+<p data-start="5807" data-end="5860"><code data-start="5807" data-end="5829">gzip.open(..., 'wb')</code> creates the compressed file.</p>
+</li>
+<li data-start="5861" data-end="5922">
+<p data-start="5863" data-end="5922"><code data-start="5863" data-end="5885">shutil.copyfileobj()</code> streams file contents efficiently.</p>
+</li>
+<li data-start="5923" data-end="5987">
+<p data-start="5925" data-end="5987"><code data-start="5925" data-end="5946">open(f,'w').close()</code> clears the log file after compression.</p>
+</li>
+<li data-start="5988" data-end="6031">
+<p data-start="5990" data-end="6031">Prints a rotation message for visibility.</p>
+</li>
+</ul>
+</div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "pvve7PsON5k"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

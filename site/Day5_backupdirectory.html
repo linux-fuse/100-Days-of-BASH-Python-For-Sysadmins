@@ -1,0 +1,119 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 001 — 100 Days Bash & Python</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">100 Days — Sysadmin Scripting</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day4_archiveold.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day6_rsyncincremental.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Day 5 — Backup A Directory</h1>
+<h3 data-start="5030" data-end="5041">Purpose</h3>
+<p data-start="5042" data-end="5180">Create compressed backups of important directories with a single command &mdash; ideal for system snapshots, config preservation, or migrations.</p>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">#!/usr/bin/env bash
+SRC=${1:-/etc}
+DST=${2:-/tmp/backup-etc.tar.gz}
+
+mkdir -p "$(dirname "$DST")"
+
+tar -czf "$DST" -C "$(dirname "$SRC")" "$(basename "$SRC")"
+echo "Backup created at $DST"
+
+</code></pre>
+        <div class="desc"><p>Explanation</p>
+<ul data-start="6125" data-end="6372">
+<li data-start="5423" data-end="5484">
+<p data-start="5425" data-end="5484"><strong data-start="5425" data-end="5447">Default arguments:</strong> <code data-start="5448" data-end="5454">/etc</code> &rarr; <code data-start="5457" data-end="5481">/tmp/backup-etc.tar.gz</code>.</p>
+</li>
+<li data-start="5485" data-end="5537">
+<p data-start="5487" data-end="5537"><strong data-start="5487" data-end="5502"><code data-start="5489" data-end="5499">tar -czf</code>:</strong> creates gzip-compressed archive.</p>
+</li>
+<li data-start="5538" data-end="5605">
+<p data-start="5540" data-end="5605"><strong data-start="5540" data-end="5556"><code data-start="5542" data-end="5546">-C</code> option:</strong> avoids long absolute paths inside the archive.</p>
+</li>
+<li data-start="5606" data-end="5653">
+<p data-start="5608" data-end="5653"><strong data-start="5608" data-end="5623"><code data-start="5610" data-end="5620">mkdir -p</code>:</strong> ensures destination exists.</p>
+</li>
+</ul></div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+import tarfile, sys, os
+
+src = sys.argv[1] if len(sys.argv) > 1 else '/etc'
+dst = sys.argv[2] if len(sys.argv) > 2 else '/tmp/backup-etc.tar.gz'
+
+os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+with tarfile.open(dst, 'w:gz') as tar:
+    tar.add(src, arcname=os.path.basename(src))
+
+print(f"Backup created at {dst}")
+</code></pre>
+        <div class="desc"><p>Explanation</p>
+<ul data-start="6125" data-end="6372">
+<li data-start="6125" data-end="6194">
+<p data-start="6127" data-end="6194"><strong data-start="6127" data-end="6159"><code data-start="6129" data-end="6156">tarfile.open(..., 'w:gz')</code>:</strong> creates gzip-compressed archive.</p>
+</li>
+<li data-start="6195" data-end="6252">
+<p data-start="6197" data-end="6252"><strong data-start="6197" data-end="6213"><code data-start="6199" data-end="6210">tar.add()</code>:</strong> recursively adds directory contents.</p>
+</li>
+<li data-start="6253" data-end="6316">
+<p data-start="6255" data-end="6316"><strong data-start="6255" data-end="6269"><code data-start="6257" data-end="6266">arcname</code>:</strong> ensures neat folder name inside the archive.</p>
+</li>
+<li data-start="6317" data-end="6372">
+<p data-start="6319" data-end="6372"><strong data-start="6319" data-end="6338">Cross-platform:</strong> works on Windows, macOS, Linux.</p>
+</li>
+</ul></div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "msjhH9r9X_g"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

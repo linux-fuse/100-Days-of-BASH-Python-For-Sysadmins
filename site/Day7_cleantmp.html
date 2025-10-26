@@ -1,0 +1,157 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 7 — Clean /tmp Directory Older than N Days</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Day 7 - Clean /tmp Directory Older than N Days</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day6_rsyncincremental.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day8_findlarge.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+  <main class="container">
+    <h1>Day 7 - Clean /tmp Directory Older than N Days</h1>
+<p><strong>Purpose:</strong></p>
+<p>Automate system cleanup by removing files older than a given number of days from <code data-start="3741" data-end="3747">/tmp</code>.</p>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">
+          #!/usr/bin/env bash
+
+# Default retention period: delete files older than 7 days unless specified
+DAYS=${1:-7}
+
+# Use 'find' to locate files/directories under /tmp that are older than $DAYS
+# -mindepth 1 ensures /tmp itself is not deleted
+# -mtime +$DAYS finds items modified more than N days ago
+# -print lists what will be deleted
+# -exec rm -rf {} \; deletes each found item
+# '|| true' prevents the script from exiting if find fails
+find /tmp -mindepth 1 -mtime +"$DAYS" -print -exec rm -rf {} \; || true
+
+# Output a confirmation message
+echo "Cleaned /tmp older than $DAYS days"
+
+        </code></pre>
+        <div class="desc"><p><strong>Explanation:</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="1935" data-end="2006">
+<p style="text-align: left;" data-start="1937" data-end="2006">The use of <code data-start="1948" data-end="1961">-mindepth 1</code> avoids accidental deletion of <code data-start="1992" data-end="1998">/tmp</code> itself.</p>
+</li>
+<li style="text-align: left;" data-start="2007" data-end="2062">
+<p data-start="2009" data-end="2062">The script is safe to run regularly (e.g., via cron).</p>
+</li>
+<li data-start="2063" data-end="2101">
+<p style="text-align: left;" data-start="2065" data-end="2101">Uses parameters, making it flexible.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">
+          #!/usr/bin/env python3
+"""
+Script: cleanup_tmp.py
+Purpose: Remove files and directories in /tmp older than N days.
+"""
+
+import os
+import time
+import shutil
+import sys
+
+# Get number of days from argument, default to 7
+days = int(sys.argv[1]) if len(sys.argv) > 1 else 7
+
+# Calculate cutoff time in seconds
+cutoff = time.time() - (days * 86400)  # 86400 seconds in a day
+
+# Define the root temporary directory
+root = '/tmp'
+
+# Iterate through each file/directory in /tmp
+for name in os.listdir(root):
+    path = os.path.join(root, name)
+
+    try:
+        # Check if the modification time is older than the cutoff
+        if os.path.getmtime(path) < cutoff:
+            # Remove directories safely
+            if os.path.isdir(path):
+                shutil.rmtree(path)  # remove directory recursively
+                print(f"Removed directory: {path}")
+            else:
+                os.remove(path)  # remove file
+                print(f"Removed file: {path}")
+    except Exception as e:
+        # Ignore permission errors or other exceptions
+        print(f"Skipped {path}: {e}")
+
+print(f"Cleaned /tmp older than {days} days.")
+        </code></pre>
+        <div class="desc"><p><strong>Explanation:</strong></p>
+<ul data-start="3332" data-end="3572">
+<li data-start="3332" data-end="3411">
+<p data-start="3334" data-end="3411">Replaced <code data-start="3343" data-end="3355">os.rmdir()</code> with <code data-start="3361" data-end="3378">shutil.rmtree()</code> &mdash; handles non-empty directories.</p>
+</li>
+<li data-start="3412" data-end="3464">
+<p data-start="3414" data-end="3464">Added exception printing to know what was skipped.</p>
+</li>
+<li data-start="3465" data-end="3541">
+<p data-start="3467" data-end="3541">Added flexibility to accept a command-line argument like the Bash version.</p>
+</li>
+<li data-start="3542" data-end="3572">
+<p data-start="3544" data-end="3572">Added docstring for clarity.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+</div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "PkvpbX64Y7Y"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

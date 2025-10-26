@@ -1,0 +1,162 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 13 — Wait for a TCP Port to Become Available</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Day 13 — Wait for a TCP Port to Become Available</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day12_restartservice.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day14_waitfor.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+  <main class="container">
+    <h1>Day 13 — Wait for a TCP Port to Become Available</h1>
+<p><strong data-start="5285" data-end="5308">Purpose:</strong></p>
+<p>Wait for a service to accept connections (e.g., database, SSH, HTTP) &mdash; useful in deployment scripts, init containers, CI pipelines, or orchestrated startup sequences where one service must wait for another.</p>
+
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">
+          #!/usr/bin/env bash
+#
+# wait_for_port.sh
+# Wait for a remote TCP port to become open.
+# Usage:
+#   ./wait_for_port.sh [HOST] [PORT] [TIMEOUT_SECONDS]
+# Examples:
+#   ./wait_for_port.sh 127.0.0.1 22 30
+#   ./wait_for_port.sh db.example.com 5432 60
+
+set -u  # treat unset variables as an error
+
+HOST=${1:-127.0.0.1}       # default host
+PORT=${2:-22}             # default port (SSH)
+TIMEOUT=${3:-30}          # default timeout in seconds
+
+# Check if nc (netcat) is available; it's the fastest check path.
+if ! command -v nc >/dev/null 2>&1; then
+  echo "Warning: 'nc' (netcat) not found. Falling back to /dev/tcp (bash) or failing." >&2
+  # Try bash built-in /dev/tcp if available:
+  if [ -e /dev/tcp/127.0.0.1/1 ] 2>/dev/null; then
+    USE_DEV_TCP=1
+  else
+    USE_DEV_TCP=0
+  fi
+else
+  USE_DEV_TCP=0
+fi
+
+end=$((SECONDS + TIMEOUT))
+
+# Loop until timeout; check port once per second
+while [ "$SECONDS" -lt "$end" ]; do
+  if [ "$USE_DEV_TCP" -eq 0 ]; then
+    # Use nc in "scan" mode (-z). -w 1 sets a short connect timeout per try.
+    if nc -z -w 1 "$HOST" "$PORT" >/dev/null 2>&1; then
+      echo "Port $PORT on $HOST is open"
+      exit 0
+    fi
+  else
+    # Try bash's /dev/tcp pseudo-device (works in bash on many systems)
+    # Redirect output to /dev/null and check if the file descriptor opens.
+    if (echo > /dev/tcp/"$HOST"/"$PORT") >/dev/null 2>&1; then
+      echo "Port $PORT on $HOST is open (via /dev/tcp)"
+      exit 0
+    fi
+  fi
+
+  sleep 1
+done
+
+# If we get here, timeout expired
+echo "Timeout waiting for port $PORT on $HOST after ${TIMEOUT}s" >&2
+exit 1
+
+        </code></pre>
+        <div class="desc"><p><strong data-start="5285" data-end="5308">Explanation:</strong></p>
+<ul data-start="5309" data-end="5544">
+<li data-start="5309" data-end="5371">
+<p data-start="5311" data-end="5371"><code data-start="5311" data-end="5315">nc</code> (netcat): quick TCP/UDP connectivity checks from shell.</p>
+</li>
+<li data-start="5372" data-end="5479">
+<p data-start="5374" data-end="5479">Bash <code data-start="5379" data-end="5399">/dev/tcp/host/port</code>: pseudo-device for quick connection attempts (works in many bash environments).</p>
+</li>
+</ul>
+</div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+import socket, sys, time
+
+host = sys.argv[1] if len(sys.argv) > 1 else '127.0.0.1'
+port = int(sys.argv[2]) if len(sys.argv) > 2 else 22
+timeout = int(sys.argv[3]) if len(sys.argv) > 3 else 30
+
+# Esure timeout is numeric when added to time.time()
+deadline = time.time() + float(timeout)
+
+while time.time() < deadline:
+    try:
+        s = socket.create_connection((host, port), 2)
+        s.close()
+        print('Port open')
+        break
+    except Exception:
+        time.sleep(1)
+else:
+    print('Timeout waiting for port')
+    sys.exit(1)
+</code></pre>
+        <div class="desc"><p><strong data-start="5285" data-end="5308">Explanation:</strong></p>
+<ul data-start="5309" data-end="5544">
+<li data-start="5309" data-end="5371">
+<p data-start="5311" data-end="5371">Python <code data-start="5489" data-end="5497">socket</code>: programmatic TCP connections, cross-platform.</p>
+</li>
+</ul>
+</div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "7guie7Srxdg"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

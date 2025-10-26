@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>100 Days — Sysadmin Scripting</title>
+
+<style>
+:root {
+  --accent: #ff9900;           /* Amazon orange */
+  --nav-bg: #232f3e;           /* Amazon navy */
+  --nav-hover: #37475a;        /* Darker hover */
+  --bg: #f3f3f3;               /* AWS-style background */
+  --card-bg: #ffffff;
+  --text: #111;
+  --muted: #555;
+  --link-blue: #0073bb;        /* AWS blue link */
+}
+
+/* General */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Amazon Ember", "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* ===== Header ===== */
+header {
+  background-color: var(--nav-bg);
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.brand span {
+  color: #fff;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.search-bar {
+  display: flex;
+  flex: 1;
+  max-width: 500px;
+  margin: 10px auto;
+}
+.search-bar input {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  font-size: 1rem;
+  outline: none;
+}
+.search-bar button {
+  background-color: var(--accent);
+  border: none;
+  color: #111;
+  padding: 8px 14px;
+  border-radius: 0 4px 4px 0;
+  font-weight: bold;
+  cursor: pointer;
+}
+.search-bar button:hover {
+  background-color: #f7a51a;
+}
+
+/* ===== Hero ===== */
+.hero {
+  background: linear-gradient(90deg, #232f3e 0%, #37475a 100%);
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+}
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+.hero p {
+  font-size: 1.1rem;
+  color: #ddd;
+}
+.hero a {
+  display: inline-block;
+  margin-top: 16px;
+  background: var(--accent);
+  color: #111;
+  padding: 10px 18px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.hero a:hover {
+  background-color: #f7a51a;
+}
+
+/* ===== Main ===== */
+main.container {
+  max-width: 1200px;
+  margin: 30px auto;
+  background: var(--card-bg);
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+h2 {
+  color: #232f3e;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 6px;
+  margin-top: 30px;
+}
+
+/* ===== Day Cards ===== */
+.day-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+}
+.day-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 14px 16px;
+  transition: all 0.2s ease;
+}
+.day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.day-card a {
+  text-decoration: none;
+  color: var(--link-blue);
+  font-weight: 600;
+}
+.day-card a:hover {
+  color: #c45500;
+}
+
+/* ===== Tags ===== */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.tag {
+  background: #f0f2f2;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #111;
+}
+
+/* ===== Footer ===== */
+footer {
+  background: var(--nav-bg);
+  color: white;
+  text-align: center;
+  padding: 24px;
+  margin-top: 50px;
+  font-size: 0.9rem;
+}
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .search-bar { max-width: 100%; }
+  .hero { padding: 40px 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <a href="index.html" class="brand">100 Days <span>Sysadmin Scripting</span></a>
+  <form class="search-bar" onsubmit="return false;">
+    <input type="text" id="searchInput" placeholder="Search scripts or topics..." onkeyup="filterDays()">
+    <button type="button">Search</button>
+  </form>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <h1>Welcome to 100 Days — Bash & Python for Sysadmins</h1>
+  <p>Automate everything: 100 hands-on examples of Bash and Python scripts for real-world sysadmin tasks.</p>
+  <a href="Day1_checkdisk.html">Start with Day 001 →</a>
+</section>
+
+<!-- ===== MAIN ===== -->
+<main class="container">
+  <h2>All Days</h2>
+  <ul class="day-list" id="dayList">
+    <!-- Full List -->
+    <li class="day-card"><a href="Day1_checkdisk.html">Day 1 — Check Disk Space</a></li>
+    <li class="day-card"><a href="Day2_alertlow.html">Day 2 — Alert on Low Disk</a></li>
+    <li class="day-card"><a href="Day3_rotatecompress.html">Day 3 — Rotate & Compress Logs</a></li>
+    <li class="day-card"><a href="Day4_archiveold.html">Day 4 — Archive Old Backups</a></li>
+    <li class="day-card"><a href="Day5_backupdirectory.html">Day 5 — Backup Directory</a></li>
+    <li class="day-card"><a href="Day6_rsyncincremental.html">Day 6 — Rsync Incremental Backups</a></li>
+    <li class="day-card"><a href="Day7_cleantmp.html">Day 7 — Clean /tmp Directory</a></li>
+    <li class="day-card"><a href="Day8_findlarge.html">Day 8 — Find Large Files</a></li>
+    <li class="day-card"><a href="Day9_monitormemory.html">Day 9 — Monitor Memory Usage</a></li>
+    <li class="day-card"><a href="Day10_selfupdate.html">Day 10 — Self-Updating Script</a></li>
+    <li class="day-card"><a href="Day11_killby.html">Day 11 — Kill Process by Name</a></li>
+    <li class="day-card"><a href="Day12_restartservice.html">Day 12 — Restart a Service</a></li>
+    <li class="day-card"><a href="Day13_checkservice.html">Day 13 — Check Service Status</a></li>
+    <li class="day-card"><a href="Day14_waitfor.html">Day 14 — Wait for Process</a></li>
+    <li class="day-card"><a href="Day15_checkopen.html">Day 15 — Check Open Ports</a></li>
+    <li class="day-card"><a href="Day16_firewallallow.html">Day 16 — Manage Firewall Rules</a></li>
+    <li class="day-card"><a href="Day17_adduser.html">Day 17 — Add a User</a></li>
+    <li class="day-card"><a href="Day18_deleteuser.html">Day 18 — Delete a User</a></li>
+    <li class="day-card"><a href="Day19_lockuser.html">Day 19 — Lock a User Account</a></li>
+    <li class="day-card"><a href="Day20_unlockuser.html">Day 20 — Unlock a User Account</a></li>
+    <li class="day-card"><a href="Day21_chmodrecursive.html">Day 21 — Recursive chmod</a></li>
+    <li class="day-card"><a href="Day22_findrecent.html">Day 22 — Find Recent Files</a></li>
+    <li class="day-card"><a href="Day23_countlog.html">Day 23 — Count Log Entries</a></li>
+    <li class="day-card"><a href="Day24_tailmulti.html">Day 24 — Tail Multiple Logs</a></li>
+    <li class="day-card"><a href="Day25_httphealth.html">Day 25 — HTTP Health Check</a></li>
+    <li class="day-card"><a href="Day26_downloadwith.html">Day 26 — Download with Curl</a></li>
+    <li class="day-card"><a href="Day27_scpupload.html">Day 27 — SCP Upload</a></li>
+    <li class="day-card"><a href="Day28_generatessh.html">Day 28 — Generate SSH Key</a></li>
+    <li class="day-card"><a href="Day29_testssh.html">Day 29 — Test SSH Connection</a></li>
+    <li class="day-card"><a href="Day30_rotateauthorized.html">Day 30 — Rotate Authorized Keys</a></li>
+    <li class="day-card"><a href="Day31_checkinstall.html">Day 31 — Check Installed Packages</a></li>
+    <li class="day-card"><a href="Day32_updatesystem.html">Day 32 — Update System</a></li>
+    <li class="day-card"><a href="Day33_cleanapt.html">Day 33 — Clean Package Cache</a></li>
+    <li class="day-card"><a href="Day34_snapshotpackages.html">Day 34 — Snapshot Installed Packages</a></li>
+    <li class="day-card"><a href="Day35_restorepackages.html">Day 35 — Restore Packages</a></li>
+    <li class="day-card"><a href="Day36_monitorcpu.html">Day 36 — Monitor CPU Load</a></li>
+    <li class="day-card"><a href="Day37_topmemory.html">Day 37 — Top Memory Processes</a></li>
+    <li class="day-card"><a href="Day38_topcpu.html">Day 38 — Top CPU Processes</a></li>
+    <li class="day-card"><a href="Day39_inodeusage.html">Day 39 — Inode Usage Report</a></li>
+    <li class="day-card"><a href="Day40_trimjournalctl.html">Day 40 — Trim Systemd Journal</a></li>
+    <li class="day-card"><a href="Day41_addfstab.html">Day 41 — Add Entry to fstab</a></li>
+    <li class="day-card"><a href="Day42_unmountremove.html">Day 42 — Unmount and Remove Disk</a></li>
+    <li class="day-card"><a href="Day43_checkzombies.html">Day 43 — Check for Zombie Processes</a></li>
+    <li class="day-card"><a href="Day44_monitorand.html">Day 44 — Monitor and Alert</a></li>
+    <li class="day-card"><a href="Day45_simplesupervisor.html">Day 45 — Simple Supervisor Script</a></li>
+    <li class="day-card"><a href="Day46_createcron.html">Day 46 — Create Cron Job</a></li>
+    <li class="day-card"><a href="Day47_removecron.html">Day 47 — Remove Cron Job</a></li>
+    <li class="day-card"><a href="Day48_listcrontab.html">Day 48 — List Crontab</a></li>
+    <li class="day-card"><a href="Day49_backupmysql.html">Day 49 — Backup MySQL</a></li>
+    <li class="day-card"><a href="Day50_restoremysql.html">Day 50 — Restore MySQL</a></li>
+    <li class="day-card"><a href="Day51_mysqlreplication.html">Day 51 — MySQL Replication Check</a></li>
+    <li class="day-card"><a href="Day52_backuppostgres.html">Day 52 — Backup PostgreSQL</a></li>
+    <li class="day-card"><a href="Day53_restorepostgres.html">Day 53 — Restore PostgreSQL</a></li>
+    <li class="day-card"><a href="Day54_postgresreplication.html">Day 54 — PostgreSQL Replication</a></li>
+    <li class="day-card"><a href="Day55_selfsignedcert.html">Day 55 — Generate Self-Signed Cert</a></li>
+    <li class="day-card"><a href="Day56_checkcert.html">Day 56 — Check SSL Certificate</a></li>
+    <li class="day-card"><a href="Day57_renewcertbot.html">Day 57 — Renew Let's Encrypt Cert</a></li>
+    <li class="day-card"><a href="Day58_synctime.html">Day 58 — Sync System Time</a></li>
+    <li class="day-card"><a href="Day59_getcloud.html">Day 59 — Get Cloud Metadata</a></li>
+    <li class="day-card"><a href="Day60_freeinodes.html">Day 60 — Free Inodes Report</a></li>
+    <li class="day-card"><a href="Day61_sethostname.html">Day 61 — Set Hostname</a></li>
+    <li class="day-card"><a href="Day62_systeminfo.html">Day 62 — System Info Summary</a></li>
+    <li class="day-card"><a href="Day63_uptimeand.html">Day 63 — Uptime and Load Report</a></li>
+    <li class="day-card"><a href="Day64_rebootif.html">Day 64 — Conditional Reboot</a></li>
+    <li class="day-card"><a href="Day65_watchdirectory.html">Day 65 — Watch Directory Changes</a></li>
+    <li class="day-card"><a href="Day66_sendemail.html">Day 66 — Send Email Alert</a></li>
+    <li class="day-card"><a href="Day67_sendslack.html">Day 67 — Send Slack Notification</a></li>
+    <li class="day-card"><a href="Day68_pagerdutytrigger.html">Day 68 — Trigger PagerDuty Alert</a></li>
+    <li class="day-card"><a href="Day69_lvmfree.html">Day 69 — Check LVM Free Space</a></li>
+    <li class="day-card"><a href="Day70_extendlvm.html">Day 70 — Extend LVM Volume</a></li>
+    <li class="day-card"><a href="Day71_listmounted.html">Day 71 — List Mounted Filesystems</a></li>
+    <li class="day-card"><a href="Day72_generateinventory.html">Day 72 — Generate Server Inventory</a></li>
+    <li class="day-card"><a href="Day73_deployfile.html">Day 73 — Deploy File to Multiple Hosts</a></li>
+    <li class="day-card"><a href="Day74_runcmd.html">Day 74 — Run Command on Hosts</a></li>
+    <li class="day-card"><a href="Day75_countstatus.html">Day 75 — Count Service Status</a></li>
+    <li class="day-card"><a href="Day76_topips.html">Day 76 — Top IPs from Access Log</a></li>
+    <li class="day-card"><a href="Day77_extracturls.html">Day 77 — Extract URLs from Logs</a></li>
+    <li class="day-card"><a href="Day78_detectdrift.html">Day 78 — Detect Config Drift</a></li>
+    <li class="day-card"><a href="Day79_rhelinstall.html">Day 79 — RHEL Package Install Script</a></li>
+    <li class="day-card"><a href="Day80_checkselinux.html">Day 80 — Check SELinux Status</a></li>
+    <li class="day-card"><a href="Day81_toggleselinux.html">Day 81 — Toggle SELinux</a></li>
+    <li class="day-card"><a href="Day82_checkenable.html">Day 82 — Check and Enable Service</a></li>
+    <li class="day-card"><a href="Day83_createswapfile.html">Day 83 — Create Swap File</a></li>
+    <li class="day-card"><a href="Day84_removeswapfile.html">Day 84 — Remove Swap File</a></li>
+    <li class="day-card"><a href="Day85_installnode.html">Day 85 — Install Node.js</a></li>
+    <li class="day-card"><a href="Day86_dockerrestart.html">Day 86 — Docker Restart All Containers</a></li>
+    <li class="day-card"><a href="Day87_dockercleanup.html">Day 87 — Docker Cleanup Script</a></li>
+    <li class="day-card"><a href="Day88_monitorcontainers.html">Day 88 — Monitor Containers</a></li>
+    <li class="day-card"><a href="Day89_backupdocker.html">Day 89 — Backup Docker Volumes</a></li>
+    <li class="day-card"><a href="Day90_deploycompose.html">Day 90 — Deploy Docker Compose</a></li>
+    <li class="day-card"><a href="Day91_createtar.html">Day 91 — Create Tar Archive</a></li>
+    <li class="day-card"><a href="Day92_extracttar.html">Day 92 — Extract Tar Archive</a></li>
+    <li class="day-card"><a href="Day93_encryptfile.html">Day 93 — Encrypt a File (GPG)</a></li>
+    <li class="day-card"><a href="Day94_decryptfile.html">Day 94 — Decrypt a File (GPG)</a></li>
+    <li class="day-card"><a href="Day95_monitorloggrowth.html">Day 95 — Monitor Log Growth</a></li>
+    <li class="day-card"><a href="Day96_autopatch.html">Day 96 — Auto Patch Linux</a></li>
+    <li class="day-card"><a href="Day97_cloudwatch.html">Day 97 — AWS CloudWatch Metrics</a></li>
+    <li class="day-card"><a href="Day98_s3sync.html">Day 98 — AWS S3 Sync</a></li>
+    <li class="day-card"><a href="Day99_ec2metadata.html">Day 99 — AWS EC2 Metadata</a></li>
+    <li class="day-card"><a href="Day100_summary.html">Day 100 — Project Summary</a></li>
+  </ul>
+
+  <h2>Popular Tags</h2>
+  <div class="tag-cloud">
+    <span class="tag">bash</span>
+    <span class="tag">python</span>
+    <span class="tag">automation</span>
+    <span class="tag">linux</span>
+    <span class="tag">devops</span>
+    <span class="tag">aws</span>
+    <span class="tag">cloud</span>
+    <span class="tag">docker</span>
+    <span class="tag">monitoring</span>
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>© 2025 100 Days — Sysadmin Scripting</p>
+  <p>Inspired by <a href="https://aws.amazon.com" target="_blank">AWS</a> and <a href="https://www.amazon.com" target="_blank">Amazon</a> design principles.</p>
+</footer>
+
+<script>
+function filterDays() {
+  const query = document.getElementById("searchInput").value.toLowerCase();
+  const items = document.querySelectorAll("#dayList li");
+  items.forEach(li => {
+    const text = li.innerText.toLowerCase();
+    li.style.display = text.includes(query) ? "" : "none";
+  });
+}
+</script>
+
+</body>
+</html>
+

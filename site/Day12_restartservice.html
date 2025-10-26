@@ -1,0 +1,175 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 12 — Check the Status of Multiple Systemd Services</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Day 12 — Check the Status of Multiple Systemd Services </div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day11_killby.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day13_checkservice.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+  <main class="container">
+    <h1>Day 12 — Check the Status of Multiple Systemd Services</h1>
+<p><strong>Purpose:&nbsp;</strong></p>
+<p>This script helps sysadmins verify the operational status of multiple Linux services managed by <code data-start="3895" data-end="3904">systemd</code>.<br data-start="3905" data-end="3908" /> It&rsquo;s a time-saver when monitoring multiple critical daemons like web servers, SSH, or databases.</p>
+
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">
+          #!/usr/bin/env bash
+# Script: Check status of multiple systemd services
+# Usage:
+#   ./check_services.sh ssh nginx mysql
+#   ./check_services.sh ssh,nginx,mysql
+# If no arguments are provided, defaults to ssh, nginx, and mysql.
+
+if [ "$#" -eq 0 ]; then
+  # Default list of services
+  SERVICES=("ssh" "nginx" "mysql")
+else
+  # Allow both comma-separated and space-separated service names
+  IFS=', ' read -r -a SERVICES <<< "$*"
+fi
+
+# Loop through each service and display its systemd status
+for SVC in "${SERVICES[@]}"; do
+  echo "====================================="
+  echo "Checking status for: $SVC"
+  echo "-------------------------------------"
+  # Display service status; suppress pager and errors for missing services
+  systemctl status "$SVC" --no-pager 2>/dev/null || 
+  echo "Service $SVC not found or inactive"
+  echo
+done
+
+        </code></pre>
+        <div class="desc">
+          <p><strong>Explanation:</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="968" data-end="1041">
+<p data-start="970" data-end="1041"><strong data-start="970" data-end="985"><code data-start="972" data-end="983">systemctl</code></strong> &mdash; The systemd utility to manage and inspect services.</p>
+</li>
+<li data-start="1042" data-end="1125">
+<p data-start="1044" data-end="1125"><strong data-start="1044" data-end="1080"><code data-start="1046" data-end="1051">IFS</code> (Internal Field Separator)</strong> &mdash; Used to split input on commas or spaces.</p>
+</li>
+<li data-start="1126" data-end="1184">
+<p data-start="1128" data-end="1184"><strong data-start="1128" data-end="1141"><code data-start="1130" data-end="1139">read -a</code></strong> &mdash; Reads input into an array for looping.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+        </div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">
+          #!/usr/bin/env python3
+"""
+Script: Check status of multiple systemd services
+Usage:
+    ./check_services.py ssh nginx mysql
+    ./check_services.py ssh,nginx,mysql
+If no arguments are provided, defaults to ['ssh', 'nginx', 'mysql'].
+"""
+
+import subprocess
+import sys
+
+# Default services to check
+default_services = ['ssh', 'nginx', 'mysql']
+
+# If arguments are passed, parse them; support commas and spaces
+if len(sys.argv) > 1:
+    # Join all args into one string, replace commas with spaces, then split
+    args = ' '.join(sys.argv[1:]).replace(',', ' ')
+    services = args.split()
+else:
+    services = default_services
+
+# Loop through services and check each one
+for svc in services:
+    print("=====================================")
+    print(f"Checking status for: {svc}")
+    print("-------------------------------------")
+
+    try:
+        # Run systemctl status command
+        result = subprocess.run(
+            ['systemctl', 'status', svc, '--no-pager'],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+
+        # Print the status output if successful, otherwise show a message
+        if result.returncode == 0:
+            print(result.stdout.strip())
+        else:
+            print(f"Service {svc} not found or inactive.")
+    except Exception as e:
+        print(f"Error checking {svc}: {e}")
+
+    print()
+
+
+        </code></pre>
+        <div class="desc"><p><strong>Explanation:</strong></p>
+<ul>
+<li data-start="1207" data-end="1285">
+<p data-start="1209" data-end="1285"><strong data-start="1209" data-end="1225"><code data-start="1211" data-end="1223">subprocess</code></strong> &mdash; Executes shell commands (here used to run <code data-start="1270" data-end="1281">systemctl</code>).</p>
+</li>
+<li data-start="1286" data-end="1334">
+<p data-start="1288" data-end="1334"><strong data-start="1288" data-end="1297"><code data-start="1290" data-end="1295">sys</code></strong> &mdash; Accesses command-line arguments.</p>
+</li>
+<li data-start="1335" data-end="1398">
+<p data-start="1337" data-end="1398"><strong data-start="1337" data-end="1353"><code data-start="1339" data-end="1351">split(',')</code></strong> &mdash; Splits comma-separated values into a list.</p>
+</li>
+</ul>
+<p>&nbsp;</p></div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "sPfX7wudaSw"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

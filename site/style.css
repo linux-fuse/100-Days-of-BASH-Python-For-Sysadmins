@@ -1,0 +1,173 @@
+:root {
+  --accent: #ff9900; /* Amazon orange */
+  --muted: #555555;
+  --bg: #ffffff;
+  --nav-bg: #232f3e; /* Amazon dark navy topbar */
+  --nav-text: #ffffff;
+  --card-bg: #ffffff;
+  --border: #ddd;
+  --hover-bg: #f7fafa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Amazon Ember", "Helvetica Neue", Arial, sans-serif;
+  background: #eaeaea; /* Amazon light gray background */
+  margin: 0;
+  color: #111111;
+}
+
+/* ===== Top Bar ===== */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background-color: var(--nav-bg);
+  color: var(--nav-text);
+  border-bottom: 1px solid #131a22;
+}
+
+.brand {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Layout Containers ===== */
+.container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.pane {
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.pane {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.pane:hover {
+  background: var(--hover-bg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pane h2 {
+  margin-top: 0;
+  color: #232f3e;
+}
+
+/* ===== Code and Description ===== */
+pre.code {
+  overflow-wrap: break-word;     /* Allows long words to wrap */
+  word-wrap: break-word;         /* Fallback for older browsers */
+  white-space: pre-wrap;         /* Preserves formatting but allows wrapping */
+  overflow-x: hidden;            /* Prevent horizontal scroll inside the pane */
+  overflow-y: auto;              /* Allow vertical scrolling if needed */
+  padding: 12px;
+  border-radius: 6px;
+  background: #f3f3f3;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+  max-width: 100%;               /* Prevent code block from expanding the page */
+  box-sizing: border-box;
+}
+
+.desc {
+  margin-top: 12px;
+  color: var(--muted);
+  padding-top: 8px;
+  border-top: 1px dashed #ddd;
+}
+
+/* ===== Video Section ===== */
+.video {
+  margin-top: 12px;
+}
+
+.video iframe {
+  width: 100%;
+  height: 300px;
+  border: 0;
+}
+
+/* ===== Tags ===== */
+.tags {
+  margin-top: 18px;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background: #f0f2f2;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #111;
+  transition: background 0.2s;
+}
+
+.tag:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ===== Footer ===== */
+.footer {
+  background: #232f3e;
+  color: #ffffff;
+  text-align: center;
+  padding: 1.5em;
+  font-size: 0.9rem;
+  margin-top: 40px;
+}
+
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-video iframe {
+  width: 100%;
+  max-width: 560px;
+  height: 315px;
+  display: block;
+  margin: 1em auto;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,0 +1,111 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 001 — 100 Days Bash & Python</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">100 Days — Sysadmin Scripting</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+        <nav class="topnav"><a href="Day3_rotatecompress.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day5_backupdirectory.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Day 4 — Aarchive, Clean Up Old Logs</h1>
+<h3 data-start="4202" data-end="4213">Purpose</h3>
+<p data-start="4214" data-end="4338">To automatically <strong data-start="4231" data-end="4264">archive and clean up old logs</strong> older than 30 days, preserving disk space and maintaining system hygiene.</p>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">#!/usr/bin/env bash
+find /var/log -type f -mtime +30 -print0 | 
+xargs -0 tar -czf /tmp/old-logs-archive.tar.gz --remove-files || 
+true
+echo "Archived logs older than 30 days to /tmp/old-logs-archive.tar.gz"
+</code></pre>
+        <div class="desc"><h4 data-start="4579" data-end="4595">Explanation</h4>
+<ul data-start="4596" data-end="4938">
+<li data-start="4596" data-end="4674">
+<p data-start="4598" data-end="4674"><strong data-start="4598" data-end="4634">find /var/log -type f -mtime +30</strong> &rarr; Finds log files older than 30 days.</p>
+</li>
+<li data-start="4675" data-end="4753">
+<p data-start="4677" data-end="4753"><strong data-start="4677" data-end="4699">-print0 | xargs -0</strong> &rarr; Ensures filenames with spaces are handled safely.</p>
+</li>
+<li data-start="4754" data-end="4872">
+<p data-start="4756" data-end="4872"><strong data-start="4756" data-end="4812">tar -czf /tmp/old-logs-archive.tar.gz --remove-files</strong> &rarr; Creates a compressed archive and removes the originals.</p>
+</li>
+<li data-start="4873" data-end="4938">
+<p data-start="4875" data-end="4938"><strong data-start="4875" data-end="4886">|| true</strong> &rarr; Prevents non-zero exit from stopping execution.</p>
+</li>
+</ul>
+</div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+import subprocess, shlex
+cmd = "find /var/log -type f -mtime +30 -print0 | 
+xargs -0 tar -czf /tmp/old-logs-archive.tar.gz --remove-files"
+subprocess.run(cmd, shell=True, check=False)
+print("Archived logs older than 30 days to /tmp/old-logs-archive.tar.gz")
+
+</code></pre>
+        <div class="desc"><h4 data-start="5410" data-end="5426">Explanation</h4>
+<ul data-start="5427" data-end="5686">
+<li data-start="5427" data-end="5477">
+<p data-start="5429" data-end="5477">Executes the same Bash pipeline within Python.</p>
+</li>
+<li data-start="5478" data-end="5538">
+<p data-start="5480" data-end="5538">Keeps the logic identical, simplifying script migration.</p>
+</li>
+<li data-start="5539" data-end="5618">
+<p data-start="5541" data-end="5618"><code data-start="5541" data-end="5554">check=False</code> ensures the command won&rsquo;t throw exceptions if no files match.</p>
+</li>
+<li data-start="5619" data-end="5686">
+<p data-start="5621" data-end="5686">Ideal for embedding into larger Python-based maintenance scripts.</p>
+</li>
+</ul></div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "p58VzibMVcE"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>

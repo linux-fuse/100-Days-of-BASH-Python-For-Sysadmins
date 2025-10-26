@@ -1,0 +1,164 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 11 - Auto-Restart a Failed Service </title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Day 11 - Auto-Restart a Failed Service </div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day10_selfupdate.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day12_restartservice.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+  <main class="container">
+    <h1>Day 11 - Auto-Restart a Failed Service </h1>
+<p><strong>Purpose:</strong></p>
+<p>This script automatically checks whether a given systemd service (like <code data-start="353" data-end="360">nginx</code>, <code data-start="362" data-end="368">sshd</code>, or <code data-start="373" data-end="380">mysql</code>) has failed.<br data-start="393" data-end="396">If it detects a failure, it restarts the service automatically.<br data-start="459" data-end="462">This helps maintain system uptime without manual intervention.</p>
+
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">#!/usr/bin/env bash
+# Script to check if a service has failed and restart it if needed.
+
+# Default service to check is 'nginx' unless specified as the first argument.
+SVC=${1:-nginx}
+
+# Check if the service is failed using systemctl.
+# The --quiet flag suppresses output; exit code determines result.
+if systemctl is-failed --quiet "$SVC"; then
+  echo "$SVC failed — restarting"
+  
+  # Restart the service if failed
+  systemctl restart "$SVC"
+else
+  echo "$SVC OK"
+fi
+
+</code></pre>
+        <div class="desc">systemctl is-failed exits with 0 when the service is failed, which is the opposite of many commands where 0 means success 
+          — so the logic uses that to trigger a restart.</div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">
+          #!/usr/bin/env python3
+import subprocess
+import sys
+
+# Get the service name from command-line argument or default to 'nginx'
+svc = sys.argv[1] if len(sys.argv) > 1 else 'nginx'
+
+# Run 'systemctl is-failed' and capture its output
+# The command returns exit code 0 if the service has failed
+s = subprocess.run(['systemctl', 'is-failed', svc],
+                   capture_output=True, text=True)
+
+# Check the exit code
+if s.returncode == 0:
+    # If return code is 0, service is failed
+    print(f"{svc} failed — restarting")
+    # Restart the service
+    subprocess.run(['systemctl', 'restart', svc])
+else:
+    # Any other return code means OK, inactive, or another state
+    print(f"{svc} status OK or not failed")
+
+    #!/usr/bin/env python3
+import subprocess
+import sys
+
+# Get the service name from command-line argument or default to 'nginx'
+svc = sys.argv[1] if len(sys.argv) > 1 else 'nginx'
+
+# Run 'systemctl is-failed' and capture its output
+# The command returns exit code 0 if the service has failed
+s = subprocess.run(['systemctl', 'is-failed', svc],
+                   capture_output=True, text=True)
+
+# Check the exit code
+if s.returncode == 0:
+    # If return code is 0, service is failed
+    print(f"{svc} failed — restarting")
+    # Restart the service
+    subprocess.run(['systemctl', 'restart', svc])
+else:
+    # Any other return code means OK, inactive, or another state
+    print(f"{svc} status OK or not failed")
+
+        </code></pre>
+        <div class="desc"><p><strong>Explanation:</strong></p>
+<ol data-start="2558" data-end="2851">
+    <li data-start="2558" data-end="2630">
+        <p data-start="2561" data-end="2630">Both scripts check the <em data-start="2584" data-end="2592">status</em> of a given systemd-managed service.</p>
+    </li>
+    <li data-start="2631" data-end="2711">
+        <p data-start="2634" data-end="2711">If the service is in a <strong data-start="2657" data-end="2667">failed</strong> state, they automatically <strong data-start="2694" data-end="2708">restart it</strong>.</p>
+    </li>
+    <li data-start="2712" data-end="2758">
+        <p data-start="2715" data-end="2758">If it&rsquo;s healthy, they simply report &ldquo;OK.&rdquo;</p>
+    </li>
+    <li data-start="2759" data-end="2851">
+        <p data-start="2762" data-end="2851">This can be added to a <strong data-start="2785" data-end="2797">cron job</strong> or <strong data-start="2801" data-end="2818">systemd timer</strong> for automated uptime recovery.</p>
+    </li>
+    <li data-start="3245" data-end="3320">
+        <p data-start="3248" data-end="3320">The script first checks the service state using <code data-start="3296" data-end="3317">systemctl is-active</code>.</p>
+    </li>
+    <li data-start="3321" data-end="3372">
+        <p data-start="3324" data-end="3372">If it&rsquo;s active, it simply prints confirmation.</p>
+    </li>
+    <li data-start="3373" data-end="3423">
+        <p data-start="3376" data-end="3423">If not, it attempts to <strong data-start="3399" data-end="3408">start</strong> the service.</p>
+    </li>
+    <li data-start="3424" data-end="3485">
+        <p data-start="3427" data-end="3485">After starting, it <strong data-start="3446" data-end="3458">verifies</strong> the operation succeeded.</p>
+    </li>
+    <li data-start="3486" data-end="3570">
+        <p data-start="3489" data-end="3570">Works well as a <strong data-start="3505" data-end="3517">cron job</strong>, <strong data-start="3519" data-end="3538">monitoring hook</strong>, or <strong data-start="3543" data-end="3569">daily service watchdog</strong>.</p>
+    </li>
+</ol>
+
+</div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "jXLU41CLpnM"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>
