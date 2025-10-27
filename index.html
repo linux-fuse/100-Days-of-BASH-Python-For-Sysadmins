@@ -334,8 +334,27 @@ footer a:hover {
 
 <!-- ===== FOOTER ===== -->
 <footer>
-  <p>© 2025 100 Days — Sysadmin Scripting</p>
-  <p>Inspired by <a href="https://aws.amazon.com" target="_blank">AWS</a> and <a href="https://www.amazon.com" target="_blank">Amazon</a> design principles.</p>
+ <div id="visit-counter" style="
+  background: #eef;
+  border: 1px solid #88a;
+  padding: 10px;
+  width: fit-content;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  margin-top: 15px;
+">
+  Total Page Visits: <span id="visit-count">Loading...</span>
+</div>
+<script>
+  fetch('https://api.countapi.xyz/hit/my-awesome-site/index')
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('visit-count').textContent = data.value;
+    })
+    .catch(() => {
+      document.getElementById('visit-count').textContent = "Error";
+    });
+</script>
 </footer>
 
 <script>
