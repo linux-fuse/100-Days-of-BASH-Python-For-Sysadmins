@@ -334,19 +334,19 @@ footer a:hover {
 
 <!-- ===== FOOTER ===== -->
 <footer>
- <div id="visit-counter" style="
-  background: #eef;
-  border: 1px solid #88a;
-  padding: 10px;
-  width: fit-content;
-  border-radius: 5px;
-  font-family: Arial, sans-serif;
-  margin-top: 15px;
-">
+  <div id="visit-counter" style="
+    display: inline-block;
+    background: #f0f8ff;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-family: monospace;
+    color: #333;
+  ">
   Total Page Visits: <span id="visit-count">Loading...</span>
 </div>
 <script>
-  fetch('https://api.countapi.xyz/hit/my-awesome-site/index')
+  fetch('https://linux-fuse.github.io/100-Days-of-BASH-Python-For-Sysadmins/index.html')
     .then(response => response.json())
     .then(data => {
       document.getElementById('visit-count').textContent = data.value;
