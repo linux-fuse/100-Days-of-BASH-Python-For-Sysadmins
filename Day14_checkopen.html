@@ -1,0 +1,156 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 14 — Check Staus of Multiple ports</title>
+<link rel="stylesheet" href="style.css">
+<!-- Highlight.js light theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded', (event) => { hljs.highlightAll(); });</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Day 14 — Check Staus of Multiple ports</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day12_restartservice.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day14_waitfor.html"> NEXT PAGE >> </a>
+    </nav>
+  </header>
+  <main class="container">
+    <h1>Day 14 — Check Staus of Multiple ports</h1>
+    <p><strong>Purpose</strong>:</p>
+<p>Monitoring open ports is a fundamental sysadmin task for network troubleshooting, service validation, and security audits. Script #14 demonstrates how to check whether TCP ports are open or closed on a Linux system using both Bash and Python approaches.</p>
+    <div class="split">
+      <section class="pane">
+        <h2>Bash</h2>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+# Script #14 - Multi-Port TCP Listener Check (Bash)
+# Checks if one or more TCP ports are open/listening on the local Linux system.
+# Usage: ./check_ports.sh 22 80 443
+
+# Exit if no ports are provided
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <port1> [port2] ..."
+  exit 1
+fi
+
+# Loop over all command-line arguments (ports)
+for port in "$@"; do
+  # ss -tln : list TCP listening sockets, numeric output
+  # awk '{print $4}' : extract the "local address:port" column
+  # grep -q ":$port$" : check if port appears at the end of the column
+  # && / || : conditional to print OPEN or CLOSED
+  ss -tln | awk '{print $4}' | grep -q ":$port\$" && \
+    echo "Port $port: OPEN" || echo "Port $port: CLOSED"
+done
+</code></pre>
+        <div class="desc">
+          <p><strong>Explanation</strong>:</p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="2633" data-end="2689">
+<p data-start="2635" data-end="2689"><code data-start="2635" data-end="2644">ss -tln</code> &ndash; shows TCP listening sockets numerically.</p>
+</li>
+<li data-start="2692" data-end="2747">
+<p data-start="2694" data-end="2747"><code data-start="2694" data-end="2699">awk</code> &ndash; extracts the local address and port column.</p>
+</li>
+<li data-start="2750" data-end="2794">
+<p data-start="2752" data-end="2794"><code data-start="2752" data-end="2758">grep</code> &ndash; searches for the specific port.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+        </div>
+        <div class="video"></div>
+      </section>
+
+      <section class="pane">
+        <h2>Python 3</h2>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import sys, socket
+
+# Ensure at least one port is provided
+if len(sys.argv) < 2:
+    print(f"Usage: {sys.argv[0]} port1 [port2 ...]")
+    sys.exit(1)
+
+# Check if TCP port is open
+def check_tcp(port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(0.5)
+    result = s.connect_ex(('127.0.0.1', port))  # returns 0 if port open
+    s.close()
+    return result == 0  # True if open, False if closed
+
+# Check if UDP port is bound
+def check_udp(port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # Attempt to bind; if successful, port is closed
+        s.bind(('127.0.0.1', port))
+        s.close()
+        return False
+    except OSError:
+        # If unsuccessful, port is in use → OPEN
+        return True
+
+# Loop through all ports provided
+for arg in sys.argv[1:]:
+    port = int(arg)  # Convert to integer
+    tcp_status = "OPEN" if check_tcp(port) else "CLOSED"
+    udp_status = "OPEN" if check_udp(port) else "CLOSED"
+    print(f"Port {port}: TCP {tcp_status}, UDP {udp_status}")
+
+  </code></pre>
+        <div class="desc"><p><strong>Explanation</strong>:</p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="2822" data-end="2890">
+<p data-start="2824" data-end="2890"><code data-start="2824" data-end="2832">socket</code> module &ndash; creates TCP sockets and attempts a connection.</p>
+</li>
+<li data-start="2893" data-end="2955">
+<p data-start="2895" data-end="2955"><code data-start="2895" data-end="2907">connect_ex</code> &ndash; non-blocking, returns success/failure code.</p>
+</li>
+<li data-start="2958" data-end="3032">
+<p data-start="2960" data-end="3032">Minimal dependencies, portable across Linux distros and Python versions.</p>
+</li>
+</ul>
+</div>
+        <div class="video"></div>
+      </section>
+    </div>
+
+    <section class="tags">
+      <h3>Tags</h3>
+      <div class="tag-cloud">
+        <span class='tag'>placeholder</span><span class='tag'>bash</span><span class='tag'>python</span>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer">
+  <small>© 100 Days — Sysadmin Scripting</small>
+  <div id="youtube-footer"></div>
+</footer>
+
+<script>
+  // Simple embed script (static site safe)
+  const videoId = "Xo8cAnkWBJ4"; // Replace with your own video ID
+  const container = document.getElementById("youtube-footer");
+  container.innerHTML = `
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>`;
+</script>
+</body>
+</html>
