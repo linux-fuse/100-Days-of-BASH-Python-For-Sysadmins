@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 10 - Kill Processes by Name</title>
+<title>Day 15 - Detect System and Update</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,15 +13,19 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">Day 10 - Kill Processes by Name</div>
+    <div class="brand">Day 15 - Detect System and Update</div>
     <nav class="topnav"><a href="index.html">Home</a>
-    <nav class="topnav"><a href="Day9_monitormemory.html"> << LAST PAGE </a>
-    <nav class="topnav"><a href="Day11_killby.html"> NEXT PAGE >> </a>
+    <nav class="topnav"><a href="Day14_checkopen.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day16_firewallallow.html"> NEXT PAGE >> </a>
     </nav>
   </header>
 
   <main class="container">
-    <h1>Day 10 - Kill Processes by Name</h1>
+    <h1>Day 15 - Detect System and Update</h1>
+    <p><strong>Purpose</strong></p>
+<p data-start="313" data-end="467">This script automates the process of <strong data-start="350" data-end="377">updating a Linux system</strong> by detecting the available package manager and running the appropriate update commands.</p>
+<p data-start="469" data-end="694">System administrators often manage multiple distributions &mdash; Debian, Fedora, Arch, etc. &mdash; each with its own package management tool. This script eliminates the need to remember or manually run distribution-specific commands.</p>
+<p data-start="696" data-end="762">The goal: <strong data-start="706" data-end="762">One script to update any Linux system automatically.</strong></p>
 <p><strong>Purpose:</strong></p>
 <p data-start="398" data-end="624">System administrators often need to terminate misbehaving or runaway processes.<br data-start="477" data-end="480">Instead of manually finding the process ID (PID) and running <code data-start="541" data-end="547">kill</code>, you can use <strong data-start="561" data-end="572"><code data-start="563" data-end="570">pkill</code></strong> to kill processes by their name pattern directly.</p>
 <p data-start="626" data-end="695">This script simplifies that action &mdash; both in <strong data-start="671" data-end="679">Bash</strong> and <strong data-start="684" data-end="694">Python</strong>.</p>
@@ -29,46 +33,67 @@
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash">#!/usr/bin/env bash
-# Script: kill_process.sh
-# Purpose: Kill all processes matching a given name or pattern.
-# Usage: ./kill_process.sh process_name
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+set -e
+PKG=$( command -v apt || command -v dnf || command -v yum || command -v zypper || command -v pacman || command -v apk)
 
-# Check if user provided a process name as argument
-if [ -z "$1" ]; then
-  echo "Usage: $0 process_name"
-  exit 2
-fi
+# Case statement to select package managers and install updates
+case "$PKG" in 
+    *apt)
+        echo "Detected Debian/Ubuntu based on apt."
+        sudo apt update && sudo apt upgrade -y
+        ;;
+    *dnf)
+        echo "Detected Fedora-based based on dnf."
+        sudo dnf upgrade --refresh -y
+        ;;
+    *yum)
+        echo "Detected RHEL-based based on yum."
+        sudo yum update -y
+        ;;
+    *zypper)
+        echo "Detected OpenSUSE-based system based on Zypper."
+        sudo zypper refresh && sudo zypper update -y
+        ;;
+    *pacman)
+        echo "Detected Arc-based system based on pacman."
+        sudo pacman -Syu --noconfirm
+        ;;
+    *apk)
+        echo "Detected Apline-based system based on apk."
+        sudo apk update && sudo apk upgrade
+        ;;
+    *)
+        echo "Unsupported system..."
+        exit 1
+        ;;
+esac
 
-# Use pkill with -f to match the full command line
-# '|| true' prevents script from exiting with error if no process matches
-pkill -f "$1" || true
-
-# Confirmation message
-echo "pkill issued for $1"
-
+# Print confirmation
+echo "System updated successfully."
 </code></pre>
-        <div class="desc"><p><strong>Explanation:</strong></p>
-<h4 data-start="739" data-end="754"><code data-start="747" data-end="754">pkill</code></h4>
-<ul data-start="755" data-end="1065">
-    <li data-start="755" data-end="827">
-        <p data-start="757" data-end="827">A command-line utility that terminates processes by name or pattern.</p>
-    </li>
-    <li data-start="828" data-end="902">
-        <p data-start="830" data-end="902">Part of the <strong data-start="842" data-end="852">procps</strong> package, available on most Linux distributions.</p>
-    </li>
-    <li data-start="903" data-end="1065">
-        <p data-start="905" data-end="915">Options:</p>
-        <ul data-start="918" data-end="1065">
-            <li data-start="918" data-end="987">
-                <p data-start="920" data-end="987"><code data-start="920" data-end="924">-f</code>: Match the <strong data-start="936" data-end="957">full command line</strong>, not just the process name.</p>
-            </li>
-            <li data-start="990" data-end="1065">
-                <p data-start="992" data-end="1065">Exits with 0 if processes were matched and killed, or non-zero otherwise.</p>
-            </li>
-        </ul>
-    </li>
+        <div class="desc">
+          <p><strong>Explanation:</strong></p>
+<ul>
+<li data-start="2128" data-end="2209">
+<p data-start="2131" data-end="2209"><code data-start="2131" data-end="2139">set -e</code><br data-start="2139" data-end="2142" /> &rarr; Makes the script exit if any command fails (safety measure).</p>
+</li>
+<li data-start="2211" data-end="2326">
+<p data-start="2214" data-end="2326"><code data-start="2214" data-end="2263">PKG=$(command -v apt || command -v dnf || ... )</code><br data-start="2263" data-end="2266" /> &rarr; Finds the first available package manager executable.</p>
+</li>
+<li data-start="2328" data-end="2418">
+<p data-start="2331" data-end="2418"><code data-start="2331" data-end="2348">case "$PKG" in)</code><br data-start="2348" data-end="2351" /> &rarr; Branches logic depending on which package manager was found.</p>
+</li>
+<li data-start="2420" data-end="2513">
+<p data-start="2423" data-end="2513">Each <code data-start="2428" data-end="2435">*apt)</code>, <code data-start="2437" data-end="2444">*dnf)</code>, etc. block runs update/upgrade commands specific to that manager.</p>
+</li>
+<li data-start="2515" data-end="2607">
+<p data-start="2518" data-end="2607"><code data-start="2518" data-end="2522">*)</code><br data-start="2522" data-end="2525" /> &rarr; Default case: handles systems with unsupported or missing package managers.</p>
+</li>
 </ul>
+<p>&nbsp;</p>
+
 </div>
         <div class="video"></div>
       </section>
@@ -76,43 +101,61 @@ echo "pkill issued for $1"
       <section class="pane">
         <h2>Python 3</h2>
         <pre class="code"><code class="language-python">#!/usr/bin/env python3
-"""
-Script: kill_process.py
-Purpose: Kill all running processes matching a given name.
-Requires: 'pkill' installed on the system.
-Usage: ./kill_process.py process_name
-"""
+#!/usr/bin/env python3
 
-import sys
-import subprocess
+import subprocess, sys, shutil
 
-# Get process name from command-line arguments
-name = sys.argv[1] if len(sys.argv) > 1 else ''
+pkg_managers = {
+    "apt": ["sudo", "apt", "update", "&&", "sudo", "apt", "upgrade", "-y"],
+    "dnf": ["sudo", "dnf", "upgrade", "--refresh", "-y"],
+    "yum": ["sudo", "yum", "update", "-y"],
+    "zypper": ["sudo", "zypper", "refresh", "&&", "sudo", "zypper", "update", "-y"],
+    "pacman": ["sudo", "pacman", "-Syu", "--noconfirm"],
+    "apk": ["sudo", "apk", "update", "&&", "sudo", "apk", "upgrade"]
+}
 
-# Validate input
-if not name:
-    print('Usage: ./kill_process.py process_name')
-    sys.exit(2)
+# Detetect package manager
+detected = None
+for pm in pkg_managers:
+    if shutil.which(pm):
+        detected = pm
+        break
 
-# Run pkill -f <name>
-# -f matches the entire command line for flexibility
-# check=False ensures script won't crash if pkill finds no matches
-subprocess.run(['pkill', '-f', name], check=False)
+if not detected:
+    print("Unsupported system...")
+    sys.exit(1)
 
-# Display confirmation message
-print(f"pkill issued for {name}")
+print(f"Detected {detected}-based system")
 
+# Try to run the update command, provide confirmation
+try:
+    subprocess.run(" ".join(pkg_managers[detected]), shell=True, check=True)
+    print("System updated successfully")
+except subprocess.CalledProcessError:
+    print("System update failed, check permission or package sources")
 </code></pre>
-        <div class="desc"><p><strong>Explanation:</strong></p>
-<h4 data-start="1067" data-end="1103"><strong>Python&rsquo;s <code data-start="1084" data-end="1096">subprocess</code> Module</strong></h4>
-<ul data-start="1104" data-end="1308">
-    <li data-start="1104" data-end="1183">
-        <p data-start="1106" data-end="1183">The <strong data-start="1110" data-end="1126"><code data-start="1112" data-end="1124">subprocess</code></strong> module allows Python to execute shell commands safely.</p>
-    </li>
-    <li data-start="1184" data-end="1308">
-        <p data-start="1186" data-end="1308">It&rsquo;s useful when wrapping system tools inside Python logic for automation (e.g., kill monitoring, process restarts, etc.).</p>
-    </li>
-</ul></div>
+        <div class="desc">
+          <p><strong>Explanation:</strong></p>
+<ul data-start="3978" data-end="4378">
+<li data-start="3978" data-end="4065">
+<p data-start="3981" data-end="4065"><code data-start="3981" data-end="3999">shutil.which(pm)</code><br data-start="3999" data-end="4002" /> &rarr; Checks if the package manager exists on the system PATH.</p>
+</li>
+<li data-start="4067" data-end="4147">
+<p data-start="4070" data-end="4147">The dictionary <code data-start="4085" data-end="4099">pkg_managers</code> defines the update commands for each manager.</p>
+</li>
+<li data-start="4149" data-end="4266">
+<p data-start="4152" data-end="4266">Once a manager is detected, it runs the corresponding update command using <code data-start="4227" data-end="4245">subprocess.run()</code> with <code data-start="4251" data-end="4263">shell=True</code>.</p>
+</li>
+<li data-start="4268" data-end="4309">
+<p data-start="4271" data-end="4309">If none are found, exits gracefully.</p>
+</li>
+<li data-start="4311" data-end="4378">
+<p data-start="4314" data-end="4378">Exception handling ensures clear feedback if the update fails.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -132,7 +175,7 @@ print(f"pkill issued for {name}")
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "U1m6bS6tyao"; // Replace with your own video ID
+  const videoId = "JGWMsbj2hc8"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
