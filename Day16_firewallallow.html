@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 16 — Allow a Port Through Firewall</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,154 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 16 — Allow a Port Through Firewall</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day15_selfupdate.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day17_adduser.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 16 — Allow a Port Through Firewall</h1>
+<p data-start="452" data-end="570"><strong>Purpose</strong>:</p>
+<p data-start="452" data-end="570">Firewalls are the first line of defense in system administration &mdash; controlling inbound and outbound network traffic.</p>
+<p data-start="572" data-end="640">However, different Linux distributions use different firewall tools:</p>
+<ul data-start="641" data-end="790">
+<li data-start="641" data-end="692">
+<p data-start="643" data-end="692"><strong data-start="643" data-end="661">Debian/Ubuntu:</strong> <code data-start="662" data-end="667">ufw</code> (Uncomplicated Firewall)</p>
+</li>
+<li data-start="693" data-end="747">
+<p data-start="695" data-end="747"><strong data-start="695" data-end="718">RHEL/Fedora/CentOS:</strong> <code data-start="719" data-end="730">firewalld</code> (<code data-start="732" data-end="746">firewall-cmd</code>)</p>
+</li>
+<li data-start="748" data-end="790">
+<p data-start="750" data-end="790"><strong data-start="750" data-end="779">Legacy / Minimal systems:</strong> <code data-start="780" data-end="790">iptables</code></p>
+</li>
+</ul>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+#Debian: ufw, RHEL/Fedora/Rocky: firewalld/firewall-cmd, Legacy: 
+#iptables
+
+set -e
+
+PORT=${1:-22}
+# Determine which tool
+if command -v ufw >/dev/null 2>&1; then
+    FIREWALL="ufw"
+elif command -v firewall-cmd >/dev/null 2>&1; then
+    FIREWALL="firewalld"
+elif command -v iptables >/dev/null 2>&1; then
+    FIREWALL="iptables"
+else
+    echo "No supported firewall found..."
+    exit 1
+fi
+
+# Allow port using tool
+case "$FIREWALL" in
+    ufw)
+        echo "Detected UFW"
+        sudo ufw allow "$PORT"
+        sudo ufw reload
+        ;;
+    firewalld)
+        echo "Detected firewalld"
+        sudo firewall-cmd --permanent --add-port="${PORT}/tcp"
+        sudo firewall-cmd  --reload
+        ;;
+    
+    iptables)
+        echo "Detected iptables (LEGACY)"
+        sudo iptables -I INPUT -p tcp --dport "$PORT" -j ACCEPT
+        sudo iptables-save > /etc/ipdatbles/rules.v4 2>/dev/null || true
+        ;;    
+esac
+
+# Confirm
+echo "Port $PORT successfully allowed through $FIREWALL"</code></pre>
+        <div class="desc">
+          <p data-start="452" data-end="570"><strong>Explanation:</strong></p>
+<ol data-start="2277" data-end="2603">
+<li data-start="2277" data-end="2338">
+<p data-start="2280" data-end="2338"><code data-start="2280" data-end="2295">PORT=${1:-22}</code> &rarr; sets the port, defaulting to 22 (SSH).</p>
+</li>
+<li data-start="2339" data-end="2397">
+<p data-start="2342" data-end="2397"><code data-start="2342" data-end="2354">command -v</code> checks which firewall tool is installed.</p>
+</li>
+<li data-start="2398" data-end="2473">
+<p data-start="2401" data-end="2473"><code data-start="2401" data-end="2407">case</code> block executes the correct rule based on the detected firewall.</p>
+</li>
+<li data-start="2474" data-end="2547">
+<p data-start="2477" data-end="2547">Automatically reloads rules (<code data-start="2506" data-end="2518">ufw reload</code>, <code data-start="2520" data-end="2543">firewall-cmd --reload</code>).</p>
+</li>
+<li data-start="2548" data-end="2603">
+<p data-start="2551" data-end="2603">Saves persistent rules for <code data-start="2578" data-end="2588">iptables</code> if possible.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">#!/usr/bin/env python3
+import subprocess, shutil, sys
+
+port = sys.argv[1] if len(sys.argv) > 1 else "22"
+
+# Determine which tool
+if shutil.which("ufw"):
+    firewall = "ufw"
+elif shutil.which("firewall-cmd"):
+    firewall = "firewalld"
+elif shutil.which("iptables"):
+    firewall = "iptables"
+else:
+    print("No supported firewall found...")
+    sys.exit(1)
+
+print(f"Detected {firewall} firewall")
+# Allow port using tool
+
+try:
+    if firewall == "ufw":
+        subprocess.run(["sudo", "ufw", "allow", port], check=True)
+        subprocess.run(["sudo", "ufw", "reload"], check=True)
+    elif firewall == "firewalld":
+        subprocess.run(["sudo", "firewall-cmd", "--permanent", "--add-port={port}/tcp"], check=True)
+        subprocess.run(["sudo", "firewall-cmd",  "--reload"], check=True)
+    elif firewall == "iptables":
+        subprocess.run(["sudo", "iptables", "-I", "INPUT", "-p", "tcp", "--dport", port, "-j", "ACCEPT"], check=True)
+        subprocess.run(["sudo", "sh", "-c", "iptables-save > /etc/iptables/rules.v4"], check=True)
+    # Confirm
+    print(f"Port {port} successfully allowed through {firewall}")
+
+except subprocess.CalledProcessError:
+    print(f"Failed to alllow port {port} with {firewall}, Check Permission...")
+
+</code></pre>
+        <div class="desc"><p data-start="452" data-end="570"><strong>Explanation:</strong></p>
+<ol data-start="2277" data-end="2603">
+<li data-start="4226" data-end="4293">
+<p data-start="4229" data-end="4293"><code data-start="4229" data-end="4245">shutil.which()</code> detects the presence of known firewall tools.</p>
+</li>
+<li data-start="4294" data-end="4343">
+<p data-start="4297" data-end="4343">Chooses the correct command set dynamically.</p>
+</li>
+<li data-start="4344" data-end="4412">
+<p data-start="4347" data-end="4412">Uses <code data-start="4352" data-end="4370">subprocess.run()</code> for executing system commands securely.</p>
+</li>
+<li data-start="4413" data-end="4460">
+<p data-start="4416" data-end="4460">Includes error handling with <code data-start="4445" data-end="4457">try/except</code>.</p>
+</li>
+<li data-start="4461" data-end="4521">
+<p data-start="4464" data-end="4521">Ensures persistence for <code data-start="4488" data-end="4498">iptables</code> if rule file exists.</p>
+</li>
+</ol></div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +180,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "vBZtNNnbjB4"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
