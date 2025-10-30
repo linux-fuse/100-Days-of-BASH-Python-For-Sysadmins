@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 19 - Lock Existing User Account</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,103 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 19 - Lock Existing User Account</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day18_deleteuser.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day20_unlockuser.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 19 - Lock Existing User Account</h1>
+<p><strong>Purpose:</strong></p>
+<p>This script locks a specified user account from a Linux system.<br data-start="349" data-end="352" /> If no username is provided, the script displays usage information and exits.</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+
+# Check if username is provided
+if [ -z "$1"]; then
+    echo "Usage: $0 username"
+    exit 2
+fi
+
+# Attempt to lock the user
+passwd -l "$1" || true
+
+# Confirmation message
+echo "User $1 account locked"
+
+        </code></pre>
+        <div class="desc">
+
+                    <p><strong>Explanation:</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="1365" data-end="1455">
+<p data-start="1368" data-end="1455">Checks if the first argument (<code data-start="1398" data-end="1402">$1</code>) exists; if not, prints usage and exits with code 2.</p>
+</li>
+<li data-start="1456" data-end="1511">
+<p data-start="1459" data-end="1511">Runs <code data-start="1464" data-end="1476">passwd -l</code> Locks users account.</p>
+</li>
+<li data-start="1512" data-end="1574">
+<p data-start="1515" data-end="1574"><code data-start="1515" data-end="1524">|| true</code> ensures script continues even if <code data-start="1558" data-end="1567">userdel</code> fails.</p>
+</li>
+<li data-start="1575" data-end="1608">
+<p data-start="1578" data-end="1608">Prints a confirmation message.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import sys, subprocess
+# Retrieve username argument
+user = sys.argv[1] if len(sys.argv) > 1 else ''
+
+# Check for missing username
+if not user:
+    print("Provide user to lock")
+    sys.exit(2)
+
+# Attempt to lock user account
+subprocess.run(['passwd', '-l', user])
+
+# Confirmation message
+print(f"User {user} account locked")
+
+        </code></pre>
+        <div class="desc">
+                    <p><strong>Explanation:</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="2083" data-end="2177">
+<p data-start="2086" data-end="2177">Imports <code data-start="2094" data-end="2099">sys</code> for command-line argument handling and <code data-start="2139" data-end="2151">subprocess</code> to run system commands.</p>
+</li>
+<li data-start="2178" data-end="2222">
+<p data-start="2181" data-end="2222">Reads username from the first argument.</p>
+</li>
+<li data-start="2223" data-end="2294">
+<p data-start="2226" data-end="2294">If no username is given, it prints an error and exits with code 2.</p>
+</li>
+<li data-start="2295" data-end="2354">
+<p data-start="2298" data-end="2354">Executes <code data-start="2307" data-end="2328">passwd -l username</code> via <code data-start="2333" data-end="2351">subprocess.run()</code>.</p>
+</li>
+<li data-start="2355" data-end="2392">
+<p data-start="2358" data-end="2392">Prints confirmation once complete.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +129,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "wWUBWGRcatU"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
