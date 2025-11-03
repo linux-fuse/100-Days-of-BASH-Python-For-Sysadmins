@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 21 - Change Permissions Recursively</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,107 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 21 - Change Permissions Recursively</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day20_unlockuser.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day22_findrecent.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 21 - Change Permissions Recursively</h1>
+<p>&nbsp;</p>
+<p>This script sets file and directory permissions for a specified path.<br data-start="454" data-end="457" /> By default, it targets <code data-start="480" data-end="490">/var/www</code> (a common web root) and applies mode <code data-start="528" data-end="533">755</code>, which gives <strong data-start="547" data-end="578">read/write/execute to owner</strong> and <strong data-start="583" data-end="609">read/execute to others</strong>.<br data-start="610" data-end="613" /> The script recursively updates all subdirectories and files.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+
+#/home/joakim/projects/100-scripts/etc as default path
+PATH=${1:-/home/joakim/projects/100-scripts/etc}
+MODE=${2:-755}
+
+# Apply recursive permission
+/bin/chmod -R "$MODE" "$PATH"
+# Confirm
+echo "Perm set on $PATH to $MODE"
+
+        </code></pre>
+        <div class="desc">
+<p>&nbsp;</p>
+<p><strong>Explanation</strong></p>
+<ul>
+<li data-start="1545" data-end="1627">
+<p data-start="1548" data-end="1627"><code data-start="1548" data-end="1569">#!/usr/bin/env bash</code> &rarr; ensures the script runs with the system&rsquo;s Bash shell.</p>
+</li>
+<li data-start="1628" data-end="1703">
+<p data-start="1631" data-end="1703"><code data-start="1631" data-end="1652">PATH=${1:-/var/www}</code> &rarr; uses first argument or defaults to <code data-start="1690" data-end="1700">/var/www</code>.</p>
+</li>
+<li data-start="1704" data-end="1781">
+<p data-start="1707" data-end="1781"><code data-start="1707" data-end="1723">MODE=${2:-755}</code> &rarr; uses second argument or defaults to permission <code data-start="1773" data-end="1778">755</code>.</p>
+</li>
+<li data-start="1782" data-end="1856">
+<p data-start="1785" data-end="1856"><code data-start="1785" data-end="1811">chmod -R "$MODE" "$PATH"</code> &rarr; recursively applies the permission mode.</p>
+</li>
+<li data-start="1857" data-end="1899">
+<p data-start="1860" data-end="1899"><code data-start="1860" data-end="1866">echo</code> &rarr; confirms operation completion.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import sys, os
+#/home/joakim/projects/100-scripts/etc as default path
+path = sys.argv[1] if len(sys.argv) > 1 else '/home/joakim/projects/100-scripts/etc'
+mode = int(sys.argv[1], 8) if len(sys.argv) > 2 else 0o755
+# Apply recursive permission
+for root, dirs, files in os.walk(path):
+    try:
+        # Try setting permission on dir itself
+        os.chmod(root, mode)
+        # Set permissions to all the files inside
+        for f in files:
+            os.chmod(os.path.join(root, f), mode)
+    except PermissionError:
+        print(f"Permission denied while processing: {root}")
+# Confirm
+print(f"Permission set on {path} to {oct(mode)}")
+        </code></pre>
+        <div class="desc">
+          <p>&nbsp;</p>
+<p><strong>Explanation</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="2938" data-end="2999">
+<p data-start="2941" data-end="2999"><code data-start="2941" data-end="2957">import os, sys</code> &rarr; for filesystem and argument handling.</p>
+</li>
+<li data-start="3000" data-end="3079">
+<p data-start="3003" data-end="3079">Checks if arguments are given; if not, defaults to <code data-start="3054" data-end="3064">/var/www</code> and <code data-start="3069" data-end="3076">0o755</code>.</p>
+</li>
+<li data-start="3080" data-end="3154">
+<p data-start="3083" data-end="3154"><code data-start="3083" data-end="3098">os.walk(path)</code> &rarr; iterates recursively through all folders and files.</p>
+</li>
+<li data-start="3155" data-end="3227">
+<p data-start="3158" data-end="3227"><code data-start="3158" data-end="3180">os.chmod(root, mode)</code> &rarr; applies permission mode to each directory.</p>
+</li>
+<li data-start="3228" data-end="3300">
+<p data-start="3231" data-end="3300">For every file, it applies <code data-start="3258" data-end="3297">os.chmod(os.path.join(root, f), mode)</code>.</p>
+</li>
+<li data-start="3301" data-end="3376">
+<p data-start="3304" data-end="3376">Wrapped in a <code data-start="3317" data-end="3329">try/except</code> block t</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
     </div>
