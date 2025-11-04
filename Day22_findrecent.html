@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 22 - Find Recent Files</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,94 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 22 - Find Recent Files</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day21_chmodrecursive.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day23_countlog.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 22 - Find Recent Files</h1>
+<p>his script finds all files modified within the last <em data-start="580" data-end="591">N minutes</em> on a Linux system.<br data-start="610" data-end="613" /> It&rsquo;s useful for:</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+set -e
+
+# Default to 60 minutes if no argument passed
+MIN=${1:-60}
+
+# Use find to locate files modified recently
+/usr/bin/find / -type f -mmin -"$MIN" -print #2>/dev/null || true
+#Confirm
+echo "Search completed"
+        </code></pre>
+        <div class="desc">
+          <p><strong>Explanation</strong></p>
+<ul>
+<li data-start="1921" data-end="1994">
+<p data-start="1924" data-end="1994"><code data-start="1924" data-end="1939">MINS=${1:-60}</code> &rarr; uses the first argument or defaults to 60 minutes.</p>
+</li>
+<li data-start="1995" data-end="2087">
+<p data-start="1998" data-end="2087"><code data-start="1998" data-end="2029">find / -type f -mmin -"$MINS"</code> &rarr; lists all files modified within the last <em data-start="2073" data-end="2076">N</em> minutes.</p>
+</li>
+<li data-start="2088" data-end="2165">
+<p data-start="2091" data-end="2165"><code data-start="2091" data-end="2104">2&gt;/dev/null</code> &rarr; hides "Permission denied" errors for system directories.</p>
+</li>
+<li data-start="2166" data-end="2293">
+<p data-start="2169" data-end="2293"><code data-start="2169" data-end="2178">|| true</code> &rarr; ensures the script continues even if <code data-start="2218" data-end="2224">find</code> returns a non-zero exit (common when some paths are inaccessible).</p>
+</li>
+<li data-start="2294" data-end="2346">
+<p data-start="2297" data-end="2346">Prints start and completion messages for clarity.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import subprocess, sys
+# Default to 60 minutes if no argument passed
+min = sys.argv[1] if len(sys.argv) > 1 else '1'
+
+print(f"Searching for files modified in the last {min}...")
+# Run the find command, suppressing permission errors
+try:
+    subprocess.run(
+        ['find', '/', '-type', 'f', '-mmin', f'-{min}', '-print'],
+        stderr=subprocess.DEVNULL,
+        check=False
+        )
+
+except Exception as e:
+    print(f"Error while trying to find: {e}")
+# Confirm
+print("Search completed")
+        </code></pre>
+        <div class="desc">
+          <p><strong>Explanation</strong></p>
+<ul>
+<li data-start="3092" data-end="3217">
+<p data-start="3095" data-end="3217"><code data-start="3095" data-end="3146">mins = sys.argv[1] if len(sys.argv) &gt; 1 else '60'</code><br data-start="3146" data-end="3149" /> &rarr; accepts a user-specified number of minutes or defaults to 60.</p>
+</li>
+<li data-start="3218" data-end="3341">
+<p data-start="3221" data-end="3341"><code data-start="3221" data-end="3271">subprocess.run([...], stderr=subprocess.DEVNULL)</code><br data-start="3271" data-end="3274" /> &rarr; runs <code data-start="3284" data-end="3290">find</code> silently, ignoring &ldquo;Permission denied&rdquo; warnings.</p>
+</li>
+<li data-start="3342" data-end="3446">
+<p data-start="3345" data-end="3446"><code data-start="3345" data-end="3358">check=False</code><br data-start="3358" data-end="3361" /> &rarr; ensures the program doesn&rsquo;t exit on non-zero return codes (normal for <code data-start="3436" data-end="3442">find</code>).</p>
+</li>
+<li data-start="3447" data-end="3534">
+<p data-start="3450" data-end="3534">Exception handling gives a readable error message if something unexpected happens.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +120,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "CKWyifKHGmU"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
