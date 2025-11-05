@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 23 - Count Pattern in log file<</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,88 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 23 - Count Pattern in log file</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day22_findrecent.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day24_tailmulti.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 23 - Count Pattern in log file<</h1>
+<p>This script pair provides a lightweight utility to <strong data-start="477" data-end="542">count how many times a specific pattern appears in a log file</strong>.<br data-start="543" data-end="546" /> It works for any log file and can be used in automation scripts or monitoring cron jobs.</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+set -e
+# logfile location
+PATTERN=${1:-ERROR}
+LOG=${2:-/var/log/syslog}
+
+# Check if lof found
+if [ ! -f "$LOG"];then
+    echo "$LOG File not found"
+    exit 1
+fi
+
+echo "Searching for pattern in log file"
+COUNT=$(grep -c "$PATTERN" "$LOG" || true)
+echo "Found $COUNT occurrences of $PATTERN in $LOG"
+        </code></pre>
+        <div class="desc">
+          <p>Explanation:</p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="1095" data-end="1184">
+<p data-start="1098" data-end="1184">The first argument (<code data-start="1118" data-end="1122">$1</code>) specifies the <strong data-start="1138" data-end="1149">pattern</strong> to search (defaults to <code data-start="1173" data-end="1180">ERROR</code>).</p>
+</li>
+<li data-start="1185" data-end="1276">
+<p data-start="1188" data-end="1276">The second argument (<code data-start="1209" data-end="1213">$2</code>) specifies the <strong data-start="1229" data-end="1241">log file</strong> (defaults to <code data-start="1255" data-end="1272">/var/log/syslog</code>).</p>
+</li>
+<li data-start="1277" data-end="1338">
+<p data-start="1280" data-end="1338"><code data-start="1280" data-end="1289">grep -c</code> counts how many lines match the given pattern.</p>
+</li>
+<li data-start="1339" data-end="1434">
+<p data-start="1342" data-end="1434"><code data-start="1342" data-end="1351">|| true</code> ensures the script doesn&rsquo;t fail if <code data-start="1387" data-end="1393">grep</code> finds no matches or the file is missing.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import sys, re
+# logfile location
+pattern = sys.argv[1] if len(sys.argv) > 1 else "ERROR"
+log_file = sys.argv[2] if len(sys.argv) > 2 else "/var/log/syslog"
+
+# Check if lof found
+try:
+    with open(log_file, "r", errors="ignore") as f:
+        count = 0
+        for line in f:
+            if re.search(pattern, line):
+                count += 1
+    print(count)
+except FileNotFoundError:
+    print(0)
+except PermissionError:
+    print(0)
+  </code></pre>
+        <div class="desc">
+          <p>Explanation:</p>
+<ul>
+<li data-start="5276" data-end="5363">In Python, we open the log file safely and use regular expressions to find matches.</li>
+<li data-start="5276" data-end="5363">The script counts lines just like <code data-start="5402" data-end="5411">grep -c</code>, but it&rsquo;s easier to expand later &mdash; for example, to filter by time or severity.</li>
+<li data-start="5276" data-end="5363">It handles missing files and permissions gracefully.</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +114,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "IdwRYKfyVwc"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
