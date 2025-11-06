@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 24 - Monitor Multiple Logs</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,99 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 24 - Monitor Multiple Log</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day23_countlog.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day25_httphealth.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
 
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 24 - Monitor Multiple Log</h1>
+<p>Script #22 implements a <strong data-start="521" data-end="548">cross-language solution</strong> to follow one or more logs continuously. This allows administrators to observe system activity <strong data-start="644" data-end="661">as it happens</strong>, improving response time to issues and reducing downtime.</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+
+# Default log files if none are specified
+LOGS=${@:-/var/log/syslog /var/log/auth.log}
+# Verify that each log file exists
+for log in $LOGS; do
+    if [ ! -f "$log" ];then
+        echo "$log file doesn't exist"
+    fi
+done 
+
+#Confirm and show logs in real time
+echo "Tailing logs: $LOGS"
+tail -f $LOGS
+
+        </code></pre>
+        <div class="desc">
+          <p>Explanation</p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="1268" data-end="1373">
+<p data-start="1271" data-end="1373"><code data-start="1271" data-end="1287">LOGS=${@:-...}</code> &ndash; Uses all passed arguments; defaults to <code data-start="1329" data-end="1346">/var/log/syslog</code> and <code data-start="1351" data-end="1370">/var/log/auth.log</code>.</p>
+</li>
+<li data-start="1374" data-end="1453">
+<p data-start="1377" data-end="1453"><code data-start="1377" data-end="1403">for log in $LOGS; do ...</code> &ndash; Checks if each file exists; warns if missing.</p>
+</li>
+<li data-start="1454" data-end="1527">
+<p data-start="1457" data-end="1527"><code data-start="1457" data-end="1485">echo "Tailing logs: $LOGS"</code> &ndash; Shows which logs are being monitored.</p>
+</li>
+<li data-start="1528" data-end="1612">
+<p data-start="1531" data-end="1612"><code data-start="1531" data-end="1546">tail -f $LOGS</code> &ndash; Continuously prints new lines as they are appended to the logs.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import sys, subprocess, os
+# Default log files if none are specified
+logs = sys.argv[1:] or ['/var/log/syslog','/var/log/auth.log']
+# Verify that each log file exists
+for log in logs:
+    if not os.path.exists(log):
+        print(f"{log} file doesn't exist", file=sys.stderr)
+print(f"Tailing logs {' '.join(logs)}")
+
+# Run tail -f
+try:
+    subprocess.run(['tail', '-f'] + logs, check=False)
+except KeyboardInterrupt:
+    print("\nStopped logged monit")
+except Exception as e:
+    print(f"Error: {e}")
+        </code></pre>
+        <div class="desc"><p>Explanation</p>
+<ul>
+<li data-start="2432" data-end="2512">
+<p data-start="2435" data-end="2512"><code data-start="2435" data-end="2465">logs = sys.argv[1:] or [...]</code> &ndash; Accept log file arguments or use defaults.</p>
+</li>
+<li data-start="2513" data-end="2589">
+<p data-start="2516" data-end="2589"><code data-start="2516" data-end="2537">os.path.exists(log)</code> &ndash; Checks existence of each log; warns if missing.</p>
+</li>
+<li data-start="2590" data-end="2699">
+<p data-start="2593" data-end="2699"><code data-start="2593" data-end="2631">subprocess.run(['tail','-f'] + logs)</code> &ndash; Runs <code data-start="2639" data-end="2648">tail -f</code> in Python to continuously display new log lines.</p>
+</li>
+<li data-start="2700" data-end="2757">
+<p data-start="2703" data-end="2757"><code data-start="2703" data-end="2722">KeyboardInterrupt</code> &ndash; Allows clean exit with Ctrl+C.</p>
+</li>
+<li data-start="2758" data-end="2829">
+<p data-start="2761" data-end="2829"><code data-start="2761" data-end="2772">Exception</code> &ndash; Catches unexpected errors (e.g., permission denied).</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+</div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +125,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "mpBp6aUjkYQ"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
