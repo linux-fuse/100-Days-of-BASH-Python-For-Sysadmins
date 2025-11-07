@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 25 - Web Server Health Check</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,124 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 25 - Web Server Health Check</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day24_tailmulti.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day26_downloadwith.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
 
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 25 - Web Server Health Check</h1>
+<p>Script #25 introduces a simple <strong data-start="622" data-end="645">HTTP health checker</strong>, implemented in both <strong data-start="667" data-end="675">Bash</strong> and <strong data-start="680" data-end="690">Python</strong>, allowing automated uptime checks or integration into CI/CD monitoring pipelines.</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+
+# URL to check
+URL=${1:-http://localhost:80/}
+
+# Check URL
+if curl -sf "$URL" >/dev/null; then
+    echo "OK"
+else
+    echo "FAIL"
+    exit 1
+fi 
+        </code></pre>
+        <div class="desc">
+          <p>Explanation:</p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="1178" data-end="1265">
+<p data-start="1181" data-end="1265"><code data-start="1181" data-end="1213">URL=${1:-http://localhost:80/}</code> &ndash; Uses a provided URL or defaults to <code data-start="1251" data-end="1262">localhost</code>.</p>
+</li>
+<li data-start="1266" data-end="1383">
+<p data-start="1269" data-end="1290"><code data-start="1269" data-end="1286">curl -sf "$URL"</code> &ndash;</p>
+<ul data-start="1294" data-end="1383">
+<li data-start="1294" data-end="1329">
+<p data-start="1296" data-end="1329"><code data-start="1296" data-end="1300">-s</code> hides output (silent mode)</p>
+</li>
+<li data-start="1333" data-end="1383">
+<p data-start="1335" data-end="1383"><code data-start="1335" data-end="1339">-f</code> treats HTTP 4xx/5xx responses as failures</p>
+</li>
+</ul>
+</li>
+<li data-start="1384" data-end="1451">
+<p data-start="1387" data-end="1451"><code data-start="1387" data-end="1399">&gt;/dev/null</code> &ndash; Discards the content, checking only the status.</p>
+</li>
+<li data-start="1452" data-end="1528">
+<p data-start="1455" data-end="1528"><code data-start="1455" data-end="1477">if ... then ... else</code> &ndash; Prints <code data-start="1487" data-end="1493">"OK"</code> for success, <code data-start="1507" data-end="1515">"FAIL"</code> otherwise.</p>
+</li>
+<li data-start="1529" data-end="1621">
+<p data-start="1532" data-end="1621"><code data-start="1532" data-end="1540">exit 1</code> &ndash; Returns a nonzero exit code on failure, ideal for monitoring tools or scripts.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import sys, requests
+# URL to check
+url = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:80/'
+
+# Check URL
+try:
+    #Send request
+    r = requests.get(url, timeout=5)
+    print(f"HTTP {r.status_code}")
+
+    #Check response
+    if r.status_code == 200:
+        print("OK")
+    else:
+        print("FAIL")
+        sys.exit(1)
+except requests.exceptions.ConnectionError:
+    print("FAIL: unable to connect to host")
+    sys.exit(2)
+except requests.exceptions.Timeout:
+    print("FAIL: Request timed out")
+    sys.exit(3)
+except Exception as e:
+    print(f"FAIL: Unexpected Error {e}")
+    sys.exit(4)
+        </code></pre>
+        <div class="desc">
+          <p>Explanation:</p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="2532" data-end="2621">
+<p data-start="2535" data-end="2621"><code data-start="2535" data-end="2565">requests.get(url, timeout=5)</code> &mdash; Attempts to fetch the page with a 5-second timeout.</p>
+</li>
+<li data-start="2622" data-end="2726">
+<p data-start="2625" data-end="2650">Checks <code data-start="2632" data-end="2647">r.status_code</code>:</p>
+<ul data-start="2654" data-end="2726">
+<li data-start="2654" data-end="2672">
+<p data-start="2656" data-end="2672"><code data-start="2656" data-end="2661">200</code> means OK</p>
+</li>
+<li data-start="2676" data-end="2726">
+<p data-start="2678" data-end="2726">Other codes (404, 500, etc.) count as failures</p>
+</li>
+</ul>
+</li>
+<li data-start="2727" data-end="2816">
+<p data-start="2730" data-end="2816">Handles specific exceptions for <strong data-start="2762" data-end="2776">connection</strong>, <strong data-start="2778" data-end="2789">timeout</strong>, and <strong data-start="2795" data-end="2813">generic errors</strong>.</p>
+</li>
+<li data-start="2817" data-end="2914">
+<p data-start="2820" data-end="2914">Prints messages and uses appropriate <strong data-start="2857" data-end="2871">exit codes</strong> for integration with automation pipelines.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +150,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "jplTpUDXF0s"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
