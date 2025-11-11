@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 26 - Download Retry Script</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,130 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 26 - Download Retry Script</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day25_httphealth.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day27_scpupload.html.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 26 - Download Retry Script</h1>
+<p>Script #24 introduces a <strong data-start="650" data-end="679">resilient file downloader</strong> that retries multiple times before giving up &mdash; implemented in both <strong data-start="747" data-end="755">Bash</strong> and <strong data-start="760" data-end="770">Python</strong>. This makes it perfect for unattended automation, backup scripts, and update pipelines.</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+URL=$1
+OUT=${2:-/tmp/download.pdf}
+
+# Check input
+if [ -z "$URL" ]; then
+    echo "USAGE: $0 URL [output file]"
+    exit 1
+fi
+
+# Attempt download up to 5 times
+for i in 1 2 3 4 5;do 
+    echo "Attempt $i: Downloading $URL"
+    if curl -fSL "$URL" -o "$OUT"; then
+        echo "Saved to $OUT"
+        break
+    else
+        echo "Attempt $i failed, retrying in 2 seconds..."
+        sleep 2
+    fi 
+done</code></pre>
+        <div class="desc">
+          <p><strong>Explanation:</strong></p>
+<ol data-start="1538" data-end="1917">
+<li data-start="1538" data-end="1613">
+<p data-start="1541" data-end="1613"><code data-start="1541" data-end="1549">URL=$1</code> and <code data-start="1554" data-end="1569">OUT=${2:-...}</code> &ndash; Take URL and optional output file path.</p>
+</li>
+<li data-start="1614" data-end="1757">
+<p data-start="1617" data-end="1639"><code data-start="1617" data-end="1628">curl -fSL</code> options:</p>
+<ul data-start="1643" data-end="1757">
+<li data-start="1643" data-end="1682">
+<p data-start="1645" data-end="1682"><code data-start="1645" data-end="1649">-f</code> &rarr; fail silently on HTTP errors</p>
+</li>
+<li data-start="1686" data-end="1726">
+<p data-start="1688" data-end="1726"><code data-start="1688" data-end="1692">-S</code> &rarr; show error message on failure</p>
+</li>
+<li data-start="1730" data-end="1757">
+<p data-start="1732" data-end="1757"><code data-start="1732" data-end="1736">-L</code> &rarr; follow redirects</p>
+</li>
+</ul>
+</li>
+<li data-start="1758" data-end="1819">
+<p data-start="1761" data-end="1819">The loop retries <strong data-start="1778" data-end="1789">5 times</strong>, with a <strong data-start="1798" data-end="1816">2-second delay</strong>.</p>
+</li>
+<li data-start="1820" data-end="1870">
+<p data-start="1823" data-end="1870">The loop <strong data-start="1832" data-end="1842">breaks</strong> immediately upon success.</p>
+</li>
+<li data-start="1871" data-end="1917">
+<p data-start="1874" data-end="1917">Properly echoes feedback for every attempt.</p>
+</li>
+</ol>
+</div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import requests, sys, time, os
+
+# Check input
+if len(sys.argv) < 2:
+    print(f"USAGE: {sys.argv[0]} URL [output file]")
+    sys.exit(1)
+
+url = sys.argv[1]
+out = sys.argv[2] if len(sys.argv) > 2 else '/tmp/download.pdf'
+
+# Attempt download up to 5 times
+for i in range(1, 6):
+    try:
+        print(f"Attempt {i}: Downloading {url}...")
+        r = requests.get(url, timeout=10, allow_redirects=True)
+        r.raise_for_status() # Raises exception for bad http requests
+
+        #save content
+        with open(out, 'wb') as f:
+            f.write(r.content)
+
+        print(f"Saved to {out}")
+        break
+    except requests.exceptions.RequestException as e:
+        print(f"Attempt {i} failed: {e}")
+        if i < 5:
+            print("Retrying in 2 seconds..")
+            time.sleep(2)
+        else:
+            print("All attempt failed, exiting...")
+            sys.exit(1)
+        </code></pre>
+        <div class="desc">
+          <p><strong>Explanation:</strong></p>
+<ol data-start="1538" data-end="1917">
+<li data-start="3126" data-end="3205">
+<p data-start="3129" data-end="3205"><code data-start="3129" data-end="3182">requests.get(url, timeout=10, allow_redirects=True)</code> &mdash; Fetch file safely.</p>
+</li>
+<li data-start="3206" data-end="3266">
+<p data-start="3209" data-end="3266"><code data-start="3209" data-end="3231">r.raise_for_status()</code> &mdash; Fails cleanly on HTTP 4xx/5xx.</p>
+</li>
+<li data-start="3267" data-end="3327">
+<p data-start="3270" data-end="3327">Writes file in binary mode (<code data-start="3298" data-end="3304">'wb'</code>) to preserve format.</p>
+</li>
+<li data-start="3328" data-end="3387">
+<p data-start="3331" data-end="3387">Retries 5 times with 2-second pauses between failures.</p>
+</li>
+<li data-start="3388" data-end="3442">
+<p data-start="3391" data-end="3442">Provides clear status output for success/failure</p>
+</li>
+</ol>
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +156,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "A4BX-ShPa_g"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
