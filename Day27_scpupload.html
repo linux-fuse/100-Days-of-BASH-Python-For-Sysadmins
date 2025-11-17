@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 27 - Securely Copy Over Files Using scp</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,107 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 27 - Securely Copy Over Files Using scp</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day26_downloadwith.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day28_generatessh.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 27 - Securely Copy Over Files Using scp</h1>
+<p data-start="442" data-end="671">Transferring files securely between systems is a <strong data-start="491" data-end="510">core daily task</strong> for system administrators.<br data-start="537" data-end="540" /> Whether you&rsquo;re pushing a configuration file to a remote server or fetching logs for analysis, <code data-start="634" data-end="639">scp</code> (Secure Copy) is your friend.</p>
+<p data-start="673" data-end="821">Script #25 shows how to automate this securely using both <strong data-start="731" data-end="739">Bash</strong> and <strong data-start="744" data-end="754">Python</strong>, ideal for integration into larger deployment or backup workflows.</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+
+# Ensure correct arguments
+if [ $# -lt 2 ]; then
+    echo "USAGE: ./script27-scp.sh localfile user@host:/path"
+    exit 2
+fi
+LOCAL="$1"
+REMOTE="$2"
+
+# Perform secure copy
+echo "Transferring files"
+if scp "$LOCAL" "$REMOTE"; then
+    echo "Transfer completed"
+else
+    echo "Transfer failed"
+    exit 1
+fi
+        </code></pre>
+        <div class="desc">
+<p><strong>Explanation</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="1425" data-end="1501">
+<p data-start="1428" data-end="1501"><code data-start="1428" data-end="1445">if [ $# -lt 2 ]</code> &rarr; Ensures both local and remote arguments are passed.</p>
+</li>
+<li data-start="1502" data-end="1578">
+<p data-start="1505" data-end="1578"><code data-start="1505" data-end="1529">scp "$LOCAL" "$REMOTE"</code> &rarr; Securely copies the file to the remote path.</p>
+</li>
+<li data-start="1579" data-end="1648">
+<p data-start="1582" data-end="1648">Uses SSH under the hood, ensuring encryption and authentication.</p>
+</li>
+<li data-start="1649" data-end="1701">
+<p data-start="1652" data-end="1701">Clear output for successful or failed transfer.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env python3
+import sys, os, subprocess
+# Ensure correct arguments
+if len(sys.argv) < 3:
+    print(f"Usage {sys.argv[0]} localfile user@host:/path")
+    sys.exit(2) 
+
+local = sys.argv[1]
+remote = sys.argv[2]
+# Perform secure copy
+
+if not os.path.exists(local):
+    print(f"Error: local path {local} not found")
+    sys.exit(1)
+
+print(f"Transferring files from {local} -> {remote}")
+
+try:
+    subprocess.run(['scp', local, remote], check=True)
+    print("Transfer completed")
+except subprocess.CalledProcessError:
+    print("Frenafer Failed")
+    sys.exit(1)
+        </code></pre>
+        <div class="desc">
+<p><strong>Explanation</strong></p>
+<p>&nbsp;</p>
+<ul>
+<li data-start="2570" data-end="2660">
+<p data-start="2573" data-end="2660"><code data-start="2573" data-end="2596">os.path.exists(local)</code> &mdash; Verifies the source file exists before attempting transfer.</p>
+</li>
+<li data-start="2661" data-end="2748">
+<p data-start="2664" data-end="2748"><code data-start="2664" data-end="2706">subprocess.run(['scp', ...], check=True)</code> &mdash; Runs SCP command with error checking.</p>
+</li>
+<li data-start="2749" data-end="2810">
+<p data-start="2752" data-end="2810"><code data-start="2752" data-end="2764">try/except</code> &mdash; Captures and reports failures gracefully.</p>
+</li>
+<li data-start="2811" data-end="2900">
+<p data-start="2814" data-end="2900">Same behavior as Bash script but easier to extend (e.g., logging, multiple targets).</p>
+</li>
+</ul>
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +133,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "DP80HvDRdsU"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"

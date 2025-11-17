@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Day 001 — 100 Days Bash & Python</title>
+<title>Day 28 - Generate ssh Keys<</title>
 <link rel="stylesheet" href="style.css">
 <!-- Highlight.js light theme -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
@@ -13,29 +13,96 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">100 Days — Sysadmin Scripting</div>
-    <nav class="topnav"><a href="index.html">Home</a></nav>
+    <div class="brand">Day 28 - Generate ssh Keys</div>
+    <nav class="topnav"><a href="index.html">Home</a>
+    <nav class="topnav"><a href="Day27_scpupload.html"> << LAST PAGE </a>
+    <nav class="topnav"><a href="Day29_testssh.html"> NEXT PAGE >> </a>
+    </nav>
   </header>
-
   <main class="container">
-    <h1>Day 001 — Placeholder Example 001</h1>
-
+    <h1>Day 28 - Generate ssh Keys<</h1>
+<p data-start="497" data-end="728">SSH keypairs are the backbone of secure, passwordless access in Linux and DevOps environments.<br data-start="591" data-end="594" /> Instead of typing passwords every time you connect, you authenticate using a <strong data-start="671" data-end="696">cryptographic keypair</strong> (a public and a private key).</p>
+<p data-start="730" data-end="924">This script automates key creation, ensuring consistency across systems while supporting user-defined output locations &mdash; ideal for bootstrapping new servers or setting up automated CI/CD agents.</p>
     <div class="split">
       <section class="pane">
         <h2>Bash</h2>
-        <pre class="code"><code class="language-bash"># Day 001 - Bash placeholder
-echo 'Hello from bash day 001'
-# add your commands here</code></pre>
-        <div class="desc">Bash script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-bash">
+#!/usr/bin/env bash
+
+OUT=${1:-$HOME/.ssh/ansible-sample}
+# Generate a new 2048-bit RSA keypair (no passphrase)
+ssh-keygen -t rsa -b 2048 -f "$OUT" -N "" >/dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+    echo "Keypair generated"
+    echo "Public key:"
+    echo "${OUT}.pub"
+else
+    echo "Failed to generate keypair" >&2
+    exit 1
+fi
+        </code></pre>
+        <div class="desc">
+          <p><strong>Explanation</strong>&nbsp;</p>
+<ul>
+<li data-start="1468" data-end="1556">
+<p data-start="1471" data-end="1556"><code data-start="1471" data-end="1500">OUT=${1:-$HOME/.ssh/id_rsa}</code><br data-start="1500" data-end="1503" /> &rarr; Sets default output location if none provided.</p>
+</li>
+<li data-start="1557" data-end="1667">
+<p data-start="1560" data-end="1667"><code data-start="1560" data-end="1603">ssh-keygen -t rsa -b 2048 -f "$OUT" -N ""</code><br data-start="1603" data-end="1606" /> &rarr; Creates a new 2048-bit RSA keypair with no passphrase.</p>
+</li>
+<li data-start="1668" data-end="1711">
+<p data-start="1671" data-end="1711">Redirects output for silent operation.</p>
+</li>
+<li data-start="1712" data-end="1771">
+<p data-start="1715" data-end="1771">Displays success message and the generated public key.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+        </div>
         <div class="video"></div>
       </section>
 
       <section class="pane">
         <h2>Python 3</h2>
-        <pre class="code"><code class="language-python"># Day 001 - Python placeholder
-print('Hello from python day 001')
-# add your Python code here</code></pre>
-        <div class="desc">Python script placeholder — replace with real script and description.</div>
+        <pre class="code"><code class="language-python">
+#!/usr/bin/env bash
+import sys, subprocess, os
+
+out = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser('~/.ssh/ansible-sample2')
+os.makedirs(os.path.dirname(out), exist_ok=True)
+# Generate a new 2048-bit RSA keypair (no passphrase)
+print(f"generating ssh keypair at {out}")
+
+try:
+    subprocess.run(['ssh-keygen', '-t', 'rsa', '-b', '2048', '-f', out, '-N', ''], check=True)
+    pubkey_path = f"{out}.pub"
+    if os.path.exists(pubkey_path):
+        with open(pubkey_path) as pub:
+            print("\nPublic Key: \n", pub.read().strip())
+    else:
+        print("Public key not found")
+except subprocess.CalledProcessError:
+    print("Failed to generate keypass")
+    sys.exit(1)
+        </code></pre>
+        <div class="desc">
+          <p><strong>Explanation</strong>&nbsp;</p>
+<ul>
+<li data-start="2914" data-end="2989">
+<p data-start="2917" data-end="2989"><code data-start="2917" data-end="2950">os.makedirs(..., exist_ok=True)</code> &rarr; Ensures <code data-start="2961" data-end="2969">~/.ssh</code> directory exists.</p>
+</li>
+<li data-start="2990" data-end="3063">
+<p data-start="2993" data-end="3063">Uses <code data-start="2998" data-end="3016">subprocess.run()</code> with <code data-start="3022" data-end="3034">check=True</code> for strict error handling.</p>
+</li>
+<li data-start="3064" data-end="3116">
+<p data-start="3067" data-end="3116">On success, reads and displays the <code data-start="3102" data-end="3108">.pub</code> file.</p>
+</li>
+<li data-start="3117" data-end="3188">
+<p data-start="3120" data-end="3188">Cleaner, reusable, and extendable for multi-host key provisioning.</p>
+</li>
+</ul>
+        </div>
         <div class="video"></div>
       </section>
     </div>
@@ -55,7 +122,7 @@ print('Hello from python day 001')
 
 <script>
   // Simple embed script (static site safe)
-  const videoId = "dQw4w9WgXcQ"; // Replace with your own video ID
+  const videoId = "qMkHfHmnyvE"; // Replace with your own video ID
   const container = document.getElementById("youtube-footer");
   container.innerHTML = `
     <iframe width="560" height="315"
